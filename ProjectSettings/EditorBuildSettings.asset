@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/WebXR/Samples/Desert/WebXR.unity
-    guid: 62764e63b9bc64baaaf251014195be42
+    path: Assets/Scenes/OfficeVR.unity
+    guid: 6316f3b35fdd7ba42958df24b41fbf5f
   m_configObjects: {}
