@@ -7,6 +7,23 @@ using UnityEngine.XR;
 
 namespace WebXR
 {
+    internal static class ExampleUtil
+    {
+        public static bool isPresent()
+        {
+            var xrDisplaySubsystems = new List<XRDisplaySubsystem>();
+            SubsystemManager.GetInstances<XRDisplaySubsystem>(xrDisplaySubsystems);
+            foreach (var xrDisplay in xrDisplaySubsystems)
+            {
+                if (xrDisplay.running)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public enum WebXRControllerHand
     {
         NONE,
@@ -72,7 +89,7 @@ namespace WebXR
                 WebXRControllerInput input = inputMap.inputs[i];
                 if (action == input.actionName)
                 {
-                    if (XRDevice.isPresent && !input.unityInputIsButton)
+                    if (ExampleUtil.isPresent() && !input.unityInputIsButton)
                     {
                         return Input.GetAxis(input.unityInputName);
                     }
@@ -91,7 +108,7 @@ namespace WebXR
 
         public bool GetButton(string action)
         {
-            if (XRDevice.isPresent)
+            if (ExampleUtil.isPresent())
             {
                 foreach (WebXRControllerInput input in inputMap.inputs)
                 {
@@ -129,7 +146,7 @@ namespace WebXR
         public bool GetButtonDown(string action)
         {
             // Use Unity Input Manager when XR is enabled and WebXR is not being used (eg: standalone or from within editor).
-            if (XRDevice.isPresent)
+            if (ExampleUtil.isPresent())
             {
                 foreach (WebXRControllerInput input in inputMap.inputs)
                 {
@@ -150,7 +167,7 @@ namespace WebXR
         public bool GetButtonUp(string action)
         {
             // Use Unity Input Manager when XR is enabled and WebXR is not being used (eg: standalone or from within editor).
-            if (XRDevice.isPresent)
+            if (ExampleUtil.isPresent())
             {
                 foreach (WebXRControllerInput input in inputMap.inputs)
                 {
@@ -193,7 +210,7 @@ namespace WebXR
             float[] axesValues)
         {
             if (handFromString(handValue) != hand) return;
-            
+
             SetVisible(true);
 
             Quaternion sitStandRotation = WebXRMatrixUtil.GetRotationFromMatrix(sitStand);
@@ -224,7 +241,7 @@ namespace WebXR
 
             try
             {
-                return (WebXRControllerHand) Enum.Parse(typeof(WebXRControllerHand), handValue.ToUpper(), true);
+                return (WebXRControllerHand)Enum.Parse(typeof(WebXRControllerHand), handValue.ToUpper(), true);
             }
             catch
             {
@@ -270,8 +287,8 @@ namespace WebXR
 
         bool xr_inited = false;
 
-        
- #if UNITY_EDITOR || !UNITY_WEBGL               
+
+#if UNITY_EDITOR || !UNITY_WEBGL
         void InitXR()
         {
             xr_inited = true;
@@ -282,7 +299,7 @@ namespace WebXR
                 subsystems[i].TrySetTrackingOriginMode(TrackingOriginModeFlags.Floor);
             }
         }
-        
+
         void Update()
         {
             // Use Unity XR Input when enabled. When using WebXR, updates are performed onControllerUpdate.
@@ -306,7 +323,7 @@ namespace WebXR
 
             if (this.hand == WebXRControllerHand.RIGHT)
                 handNode = XRNode.RightHand;
-                
+
             InputTracking.GetNodeStates(mNodeStates);
 
             foreach (XRNodeState nodeState in mNodeStates)
@@ -318,7 +335,8 @@ namespace WebXR
                         nodeState.TryGetRotation(out mHeadRot);
                         break;
                     case XRNode.LeftHand:
-                        if (this.hand == WebXRControllerHand.LEFT) { 
+                        if (this.hand == WebXRControllerHand.LEFT)
+                        {
                             nodeState.TryGetPosition(out mHandPos);
                             nodeState.TryGetRotation(out mHandRot);
                         }

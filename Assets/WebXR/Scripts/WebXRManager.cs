@@ -18,7 +18,8 @@ namespace WebXR
         [Tooltip("Preserve the manager across scenes changes.")]
         public bool dontDestroyOnLoad = true;
 
-        [Header("Tracking")] [Tooltip("Default height of camera if no room-scale transform is present.")]
+        [Header("Tracking")]
+        [Tooltip("Default height of camera if no room-scale transform is present.")]
         public float DefaultHeight = 1.2f;
 
         [Tooltip("Represents the size of physical space available for XR.")]
@@ -119,7 +120,7 @@ namespace WebXR
 
         private void SetTrackingSpaceType()
         {
-            if (XRDevice.isPresent)
+            if (ExampleUtil.isPresent())
             {
                 XRDevice.SetTrackingSpaceType(TrackingSpace);
                 Debug.Log("Tracking Space: " + XRDevice.GetTrackingSpaceType());
