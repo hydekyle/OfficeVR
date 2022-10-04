@@ -118,6 +118,50 @@ namespace WebXR
             }
         }
 
+        void Start()
+        {
+#if UNITY_EDITOR
+            // No editor specific functionality
+#elif UNITY_WEBGL
+            ConfigureToggleXRKeyName(toggleXRKeyName);
+            XRInitSharedArray(sharedArray, sharedArray.Length);
+            ListenWebXRData();
+#endif
+            SetTrackingSpaceType();
+        }
+
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0) && xrState == WebXRState.NORMAL)
+                ClickToMove();
+
+#if UNITY_EDITOR || !UNITY_WEBGL
+            if (string.IsNullOrEmpty(toggleXRKeyName))
+                return;
+            if (Input.GetKeyUp(toggleXRKeyName))
+                toggleXrState();
+#endif
+        }
+
+        void LateUpdate()
+        {
+            if (OnHeadsetUpdate == null || xrState != WebXRState.ENABLED) return;
+
+            Matrix4x4 leftProjectionMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(0));
+            Matrix4x4 rightProjectionMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(1));
+            Matrix4x4 leftViewMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(2));
+            Matrix4x4 rightViewMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(3));
+            Matrix4x4 sitStandMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(4));
+            // Matrix4x4 sitStandMatrix = Matrix4x4.Translate(new Vector3(0, DefaultHeight, 0));
+
+            OnHeadsetUpdate(
+                leftProjectionMatrix,
+                rightProjectionMatrix,
+                leftViewMatrix,
+                rightViewMatrix,
+                sitStandMatrix);
+        }
+
         private void SetTrackingSpaceType()
         {
             if (ExampleUtil.isPresent())
@@ -220,46 +264,26 @@ namespace WebXR
             return newArray;
         }
 
-        void Start()
-        {
-#if UNITY_EDITOR
-            // No editor specific functionality
-#elif UNITY_WEBGL
-            ConfigureToggleXRKeyName(toggleXRKeyName);
-            XRInitSharedArray(sharedArray, sharedArray.Length);
-            ListenWebXRData();
-#endif
+        RaycastHit[] hit = new RaycastHit[1];
+        bool isMoving = false;
+        float playerHeight = 1.8f;
 
-            SetTrackingSpaceType();
+        async void ClickToMove()
+        {
+            if (isMoving) return;
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Physics.RaycastNonAlloc(ray, hit);
+            var targetPosition = new Vector3(hit[0].point.x, playerHeight, hit[0].point.z);
+            isMoving = true;
+            var t = 0f;
+            while (t < 1f)
+            {
+                transform.position = Vector3.Lerp(transform.position, targetPosition, t);
+                t += Time.deltaTime;
+                //await UniTask.Delay();
+            }
+            transform.position = targetPosition;
         }
 
-        void Update()
-        {
-#if UNITY_EDITOR || !UNITY_WEBGL
-            if (string.IsNullOrEmpty(toggleXRKeyName))
-                return;
-            if (Input.GetKeyUp(toggleXRKeyName))
-                toggleXrState();
-#endif
-        }
-
-        void LateUpdate()
-        {
-            if (OnHeadsetUpdate == null || xrState != WebXRState.ENABLED) return;
-
-            Matrix4x4 leftProjectionMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(0));
-            Matrix4x4 rightProjectionMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(1));
-            Matrix4x4 leftViewMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(2));
-            Matrix4x4 rightViewMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(3));
-            Matrix4x4 sitStandMatrix = WebXRMatrixUtil.NumbersToMatrix(GetFromSharedArray(4));
-            // Matrix4x4 sitStandMatrix = Matrix4x4.Translate(new Vector3(0, DefaultHeight, 0));
-
-            OnHeadsetUpdate(
-                leftProjectionMatrix,
-                rightProjectionMatrix,
-                leftViewMatrix,
-                rightViewMatrix,
-                sitStandMatrix);
-        }
     }
 }
