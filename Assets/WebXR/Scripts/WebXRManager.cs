@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.XR;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace WebXR
 {
@@ -130,10 +131,30 @@ namespace WebXR
             SetTrackingSpaceType();
         }
 
+        public float dragVsClickTime = 0.1f;
+        float lastTimeClick = -999f;
+        Vector3 lastPositionClick;
+
         void Update()
         {
-            if (Input.GetMouseButtonDown(0) && xrState == WebXRState.NORMAL)
-                ClickToMove();
+            if (Input.GetMouseButtonDown(0))
+            {
+                lastTimeClick = Time.time;
+                lastPositionClick = Input.mousePosition;
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (isMoving) return;
+                if (xrState != WebXRState.NORMAL) return;
+                if (lastPositionClick == Input.mousePosition)
+                {
+                    StartCoroutine("ClickToMove");
+                    return;
+                }
+                if (lastTimeClick + dragVsClickTime < Time.time) return;
+                StartCoroutine("ClickToMove");
+            }
 
 #if UNITY_EDITOR || !UNITY_WEBGL
             if (string.IsNullOrEmpty(toggleXRKeyName))
@@ -264,25 +285,37 @@ namespace WebXR
             return newArray;
         }
 
-        RaycastHit[] hit = new RaycastHit[1];
+        RaycastHit[] hits = new RaycastHit[1];
         bool isMoving = false;
         float playerHeight = 1.8f;
+        public float movementSpeed = 0.2f;
+        public LayerMask walkableLayer;
+        public float walkToPointDelay = 1f;
+        public BoxCollider boundariesCollider;
 
-        async void ClickToMove()
+        IEnumerator ClickToMove()
         {
-            if (isMoving) return;
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.RaycastNonAlloc(ray, hit);
-            var targetPosition = new Vector3(hit[0].point.x, playerHeight, hit[0].point.z);
-            isMoving = true;
-            var t = 0f;
-            while (t < 1f)
+            Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, walkableLayer);
+
+            if (hits[0].transform != null)
             {
-                transform.position = Vector3.Lerp(transform.position, targetPosition, t);
-                t += Time.deltaTime;
-                //await UniTask.Delay();
+                var max = boundariesCollider.size;
+                print(boundariesCollider.bounds.center);
+                print(max);
+                var targetPosition = new Vector3(Mathf.Clamp(hits[0].point.x, -max.x, max.x), transform.position.y, Mathf.Clamp(hits[0].point.z, -max.z, max.z));
+                isMoving = true;
+                float startTime = Time.time;
+                while (Time.time - startTime < walkToPointDelay)
+                {
+                    var elapsedTime = Time.time - startTime;
+                    transform.position = Vector3.Slerp(transform.position, targetPosition, elapsedTime);
+                    yield return new WaitForEndOfFrame();
+                }
+                transform.position = targetPosition;
+                isMoving = false;
             }
-            transform.position = targetPosition;
+
         }
 
     }

@@ -2,17 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Models : MonoBehaviour
+interface IItem
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Drop();
+}
+
+interface IUsableItem : IItem
+{
+    public void Use();
+}
+
+interface IReadableItem : IItem
+{
+    public void Read();
+}
+
+public class Pinga : MonoBehaviour, IReadableItem
+{
+    public void Read()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Drop()
     {
-        
+
     }
+
 }
