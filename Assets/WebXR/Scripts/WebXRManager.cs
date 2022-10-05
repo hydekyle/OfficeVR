@@ -300,10 +300,9 @@ namespace WebXR
 
             if (hits[0].transform != null)
             {
-                var max = boundariesCollider.size;
-                print(boundariesCollider.bounds.center);
-                print(max);
-                var targetPosition = new Vector3(Mathf.Clamp(hits[0].point.x, -max.x, max.x), transform.position.y, Mathf.Clamp(hits[0].point.z, -max.z, max.z));
+                var posX = Mathf.Clamp(hits[0].point.x, boundariesCollider.bounds.min.x, boundariesCollider.bounds.max.x);
+                var posZ = Mathf.Clamp(hits[0].point.z, boundariesCollider.bounds.min.z, boundariesCollider.bounds.max.z);
+                var targetPosition = new Vector3(posX, transform.position.y, posZ);
                 isMoving = true;
                 float startTime = Time.time;
                 while (Time.time - startTime < walkToPointDelay)
