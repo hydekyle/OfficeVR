@@ -1,22 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using RPGSystem;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    IEnumerator Start()
-    {
-        yield return new WaitForSeconds(1f);
-    }
+    public static GameManager Instance;
+    public RPGManager rpgManager = new();
 
-    async void Start2()
+    private void Awake()
     {
-        await UniTask.Delay(1000);
-    }
-
-    void Update()
-    {
-
+        if (Instance != null) Destroy(this.gameObject);
+        else Instance = this;
     }
 }
