@@ -306,19 +306,29 @@ namespace WebXR
 
             if (hits[0].transform != null)
             {
-                var posX = Mathf.Clamp(hits[0].point.x, boundariesCollider.bounds.min.x, boundariesCollider.bounds.max.x);
-                var posZ = Mathf.Clamp(hits[0].point.z, boundariesCollider.bounds.min.z, boundariesCollider.bounds.max.z);
-                var targetPosition = new Vector3(posX, transform.position.y, posZ);
-                isMoving = true;
-                float startTime = Time.time;
-                while (Time.time - startTime < walkToPointDelay)
+                if (hits[0].transform.gameObject.layer == LayerMask.NameToLayer("Walkable"))
                 {
-                    var elapsedTime = Time.time - startTime;
-                    transform.position = Vector3.Slerp(transform.position, targetPosition, elapsedTime);
-                    await UniTask.Yield();
+                    var posX = Mathf.Clamp(hits[0].point.x, boundariesCollider.bounds.min.x, boundariesCollider.bounds.max.x);
+                    var posZ = Mathf.Clamp(hits[0].point.z, boundariesCollider.bounds.min.z, boundariesCollider.bounds.max.z);
+                    var targetPosition = new Vector3(posX, transform.position.y, posZ);
+                    isMoving = true;
+                    float startTime = Time.time;
+                    while (Time.time - startTime < walkToPointDelay)
+                    {
+                        var elapsedTime = Time.time - startTime;
+                        transform.position = Vector3.Slerp(transform.position, targetPosition, elapsedTime);
+                        await UniTask.Yield();
+                    }
+                    transform.position = targetPosition;
+                    isMoving = false;
                 }
-                transform.position = targetPosition;
-                isMoving = false;
+                else
+                {
+                    if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
+                    {
+                        rpgEvent.TriggerPageActionList();
+                    }
+                }
             }
 
         }
