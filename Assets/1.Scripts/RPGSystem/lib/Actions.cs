@@ -28,29 +28,6 @@ namespace RPGSystem
         }
     }
 
-    // [Serializable]
-    // public class FlashScreen : RPGAction
-    // {
-    //     public Color flashColor;
-    //     public float duration;
-    //     public bool waitToEnd;
-
-    //     public  async UniTask Resolve()
-    //     {
-    //         var flashScreen = GameManager.refs.flashScreen;
-    //         var initTime = Time.time;
-    //         flashScreen.color = flashColor;
-    //         do
-    //         {
-    //             var t = (Time.time - initTime) / duration;
-    //             flashScreen.color = new Color(flashColor.r, flashColor.g, flashColor.b, 1 - t);
-    //             await UniTask.Yield();
-    //         }
-    //         while (initTime + duration >= Time.time);
-    //         flashScreen.color = new Color(0, 0, 0, 0);
-    //     }
-    // }
-
     [Serializable]
     public class ShowCanvas : RPGAction
     {
@@ -122,6 +99,7 @@ namespace RPGSystem
         public float pitch = 1f;
         [Tooltip("If null we use MainCamera as emitter")]
         public GameObject emitter;
+        public bool keepPlayingWhenDisabled;
 
         [Button("Set myself as emitter")]
         public void EmitterMyself()
@@ -137,7 +115,8 @@ namespace RPGSystem
 
         public async UniTask Resolve()
         {
-            RPGManager.AudioManager.PlaySound(clip, emitter, isLoop, volume, spatialBlend, stereoPan, pitch);
+            if (keepPlayingWhenDisabled) RPGManager.AudioManager.PlaySoundFromGameobjectDisabled(clip, emitter, isLoop, volume, spatialBlend, stereoPan, pitch);
+            else RPGManager.AudioManager.PlaySound(clip, emitter, isLoop, volume, spatialBlend, stereoPan, pitch);
             await UniTask.Delay(TimeSpan.FromSeconds(waitEnd ? clip.length : 0), ignoreTimeScale: true);
         }
     }
@@ -154,30 +133,36 @@ namespace RPGSystem
 
     public enum TweenType { PunchScale, PunchRotation }
 
-    // [Serializable]
-    // public class Tween : RPGAction
-    // {
-    //     public TweenType type;
-    //     public Transform targetTransform;
-    //     public Vector3 punch;
-    //     public float duration, elasticity;
-    //     public int vibrato;
-    //     public bool waitToEnd;
-    //     public  async UniTask Resolve()
-    //     {
-    //         UniTask task;
-    //         switch (type)
-    //         {
-    //             case TweenType.PunchScale:
-    //                 task = targetTransform.DOPunchScale(punch, duration, vibrato, elasticity).AwaitForComplete(); break;
-    //             case TweenType.PunchRotation:
-    //                 task = targetTransform.DOPunchRotation(punch, duration, vibrato, elasticity).AwaitForComplete(); break;
-    //             default:
-    //                 return;
-    //         }
-    //         await task;
-    //     }
-    // }
+    [Serializable]
+    public class Tween : RPGAction
+    {
+        public TweenType type;
+        public Vector3 punch;
+        public Transform targetTransform;
+        [Button()]
+        public void TargetMyself()
+        {
+            targetTransform = Selection.activeGameObject.transform;
+        }
+        public float duration, elasticity;
+        public int vibrato;
+        public bool waitToEnd;
+
+
+
+        public async UniTask Resolve()
+        {
+            switch (type)
+            {
+                case TweenType.PunchScale:
+                    targetTransform.DOPunchScale(punch, duration, vibrato, elasticity); break;
+                case TweenType.PunchRotation:
+                    targetTransform.DOPunchRotation(punch, duration, vibrato, elasticity); break;
+                default:
+                    return;
+            }
+        }
+    }
 
     [Serializable]
     public class AddItem : RPGAction

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RPGSystem
 {
     [Serializable]
-    public class RPGManager
+    public class RPGManager : MonoBehaviour
     {
         public static RPGManager Instance;
         public static bool isInteractAvailable = true;
@@ -16,9 +16,14 @@ namespace RPGSystem
         public GameData gameData = new();
         public AudioManager audioManager;
 
-        public RPGManager()
+        private void Awake()
         {
-            Instance = this;
+            if (Instance != null) Destroy(this.gameObject);
+            else
+            {
+                Instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
         }
     }
 
