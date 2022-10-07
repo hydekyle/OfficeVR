@@ -327,7 +327,6 @@ namespace WebXR
                     if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
                     {
                         rpgEvent.TriggerPageActionList();
-                        print("tr");
                     }
                 }
             }
