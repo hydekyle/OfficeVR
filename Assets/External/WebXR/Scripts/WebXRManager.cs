@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.XR;
 using System.Runtime.InteropServices;
 using System.Collections;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using RPGSystem;
 
 namespace WebXR
 {
@@ -134,6 +137,7 @@ namespace WebXR
         public float dragVsClickTime = 0.1f;
         float lastTimeClick = -999f;
         Vector3 lastPositionClick;
+        CancellationTokenSource sourceClickToMove = new();
 
         void Update()
         {
@@ -149,11 +153,13 @@ namespace WebXR
                 if (xrState != WebXRState.NORMAL) return;
                 if (lastPositionClick == Input.mousePosition)
                 {
-                    StartCoroutine("ClickToMove");
+                    sourceClickToMove.Cancel();
+                    ClickToMove().AttachExternalCancellation(sourceClickToMove.Token).Forget();
                     return;
                 }
                 if (lastTimeClick + dragVsClickTime < Time.time) return;
-                StartCoroutine("ClickToMove");
+                sourceClickToMove.Cancel();
+                ClickToMove().AttachExternalCancellation(sourceClickToMove.Token).Forget();
             }
 
 #if UNITY_EDITOR || !UNITY_WEBGL
@@ -289,14 +295,14 @@ namespace WebXR
         bool isMoving = false;
         float playerHeight = 1.8f;
         public float movementSpeed = 0.2f;
-        public LayerMask walkableLayer;
+        public LayerMask clickRayLayerMask;
         public float walkToPointDelay = 1f;
         public BoxCollider boundariesCollider;
 
-        IEnumerator ClickToMove()
+        async UniTask ClickToMove()
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, walkableLayer);
+            Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, clickRayLayerMask);
 
             if (hits[0].transform != null)
             {
@@ -309,7 +315,7 @@ namespace WebXR
                 {
                     var elapsedTime = Time.time - startTime;
                     transform.position = Vector3.Slerp(transform.position, targetPosition, elapsedTime);
-                    yield return new WaitForEndOfFrame();
+                    await UniTask.Yield();
                 }
                 transform.position = targetPosition;
                 isMoving = false;

@@ -1008,7 +1008,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &168920709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1027,27 +1027,22 @@ MonoBehaviour:
       switchTable: []
       variableTable: []
       localVariableTable: []
-    actionList:
-    - rid: 4105015835280277602
+    actionList: []
     trigger: 2
     isLoop: 0
     freezePlayerAtRun: 0
-    playSFXOnEnabled: {fileID: 0}
+    playSFXOnEnabled: {fileID: 8300000, guid: 464c907537ca8644abb9290e1322da73, type: 3}
+    soundOptions:
+      keepPlayingWhenDisabled: 0
+      isLoop: 0
+      volume: 1
+      spatialBlend: 1
+      stereoPan: 0
+      pitch: 1
+  enabledByConditions: 0
   references:
     version: 2
-    RefIds:
-    - rid: 4105015835280277602
-      type: {class: PlaySE, ns: RPGSystem, asm: Assembly-CSharp}
-      data:
-        clip: {fileID: 8300000, guid: 464c907537ca8644abb9290e1322da73, type: 3}
-        waitEnd: 0
-        isLoop: 0
-        volume: 1
-        spatialBlend: 1
-        stereoPan: 0
-        pitch: 1
-        emitter: {fileID: 168920707}
-        keepPlayingWhenDisabled: 1
+    RefIds: []
 --- !u!114 &168920710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4586,6 +4581,7 @@ GameObject:
   - component: {fileID: 1040468463}
   - component: {fileID: 1040468462}
   - component: {fileID: 1040468468}
+  - component: {fileID: 1040468469}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -4921,7 +4917,10 @@ MonoBehaviour:
   - sprite: {fileID: 0}
     conditions:
       switchTable: []
-      variableTable: []
+      variableTable:
+      - variableID: 000 Palanca Used Times
+        conditionality: 0
+        value: 1
       localVariableTable: []
     actionList:
     - rid: 4105015835280277600
@@ -4929,7 +4928,35 @@ MonoBehaviour:
     trigger: 2
     isLoop: 1
     freezePlayerAtRun: 0
-    playSFXOnEnabled: {fileID: 0}
+    playSFXOnEnabled: {fileID: 8300000, guid: 464c907537ca8644abb9290e1322da73, type: 3}
+    soundOptions:
+      keepPlayingWhenDisabled: 0
+      isLoop: 1
+      volume: 1
+      spatialBlend: 1
+      stereoPan: 0
+      pitch: 1
+  - sprite: {fileID: 0}
+    conditions:
+      switchTable: []
+      variableTable:
+      - variableID: 000 Palanca Used Times
+        conditionality: 1
+        value: 1
+      localVariableTable: []
+    actionList: []
+    trigger: 2
+    isLoop: 0
+    freezePlayerAtRun: 0
+    playSFXOnEnabled: {fileID: 8300000, guid: 8340cb4457340ac4c85243429bd86094, type: 3}
+    soundOptions:
+      keepPlayingWhenDisabled: 0
+      isLoop: 0
+      volume: 1
+      spatialBlend: 1
+      stereoPan: 0
+      pitch: 1
+  enabledByConditions: 1
   references:
     version: 2
     RefIds:
@@ -4947,6 +4974,26 @@ MonoBehaviour:
       type: {class: Await, ns: RPGSystem, asm: Assembly-CSharp}
       data:
         seconds: 3
+--- !u!114 &1040468469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040468461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5bd085d25ab8bc4ba91d61eba965bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  conditionTable:
+    switchTable: []
+    variableTable: []
+    localVariableTable: []
+  onEnabledSound: {fileID: 0}
+  _subscribedSwitchID: 
+  _subscribedVariableID: 
+  _subscribedLocalVariableList: 
 --- !u!1 &1040905886
 GameObject:
   m_ObjectHideFlags: 0
@@ -4957,6 +5004,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1040905888}
   - component: {fileID: 1040905887}
+  - component: {fileID: 1040905889}
   m_Layer: 0
   m_Name: '[GameManager]'
   m_TagString: Untagged
@@ -4991,6 +5039,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1040905889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040905886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05bcdf0fc2404534088b6328d2f68561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameData:
+    switches:
+      keyData: 
+      valueData: []
+    variables:
+      keyData: 
+      valueData: []
+    localVariableDic:
+      keyData: 
+      valueData: []
+    inventory:
+      keyData: []
+      valueData: 
+  audioManager:
+    mixerSFX: {fileID: 24300002, guid: 46a648965e86a4646bfe9d3de084dce5, type: 2}
+    audioMusic: {fileID: 1386103473}
 --- !u!1 &1056994842
 GameObject:
   m_ObjectHideFlags: 0

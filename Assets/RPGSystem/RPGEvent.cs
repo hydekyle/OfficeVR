@@ -79,7 +79,7 @@ namespace RPGSystem
             DestroyImmediate(GetComponent(typeof(SpriteRenderer)));
         }
 
-        void UIShowBoxCollider()
+        void UIShowBoxCollider2D()
         {
             if (pages.Exists(page => page.trigger == TriggerType.PlayerInteraction || page.trigger == TriggerType.PlayerTouch))
             {
@@ -92,6 +92,24 @@ namespace RPGSystem
             else
             {
                 if (TryGetComponent<BoxCollider2D>(out BoxCollider2D boxCollider))
+                    if (boxCollider.isTrigger) DestroyImmediate(boxCollider);
+            }
+        }
+
+        void UIShowBoxCollider()
+        {
+            if (pages.Exists(page => page.trigger == TriggerType.PlayerInteraction || page.trigger == TriggerType.PlayerTouch))
+            {
+                if (!TryGetComponent<MeshCollider>(out MeshCollider boxCollider))
+                {
+                    var newCollider = gameObject.AddComponent<MeshCollider>();
+                    newCollider.convex = true;
+                    newCollider.isTrigger = true;
+                }
+            }
+            else
+            {
+                if (TryGetComponent<MeshCollider>(out MeshCollider boxCollider))
                     if (boxCollider.isTrigger) DestroyImmediate(boxCollider);
             }
         }
@@ -130,7 +148,7 @@ namespace RPGSystem
             if (page.playSFXOnEnabled) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, page.soundOptions, gameObject);
         }
 
-        public void GetPlayerTouch()
+        public void TriggerPageActionList()
         {
             if (activePageIndex == -1) return;
             var page = GetActivePage();
