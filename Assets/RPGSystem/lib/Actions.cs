@@ -90,7 +90,7 @@ namespace RPGSystem
         public SoundOptions soundOptions = new SoundOptions()
         {
             keepPlayingWhenDisabled = false,
-            isLoop = false,
+            soundLoop = false,
             volume = 1f,
             spatialBlend = 1f,
             stereoPan = 0f,

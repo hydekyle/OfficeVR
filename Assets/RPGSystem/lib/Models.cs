@@ -19,7 +19,7 @@ namespace RPGSystem
     public struct SoundOptions
     {
         public bool keepPlayingWhenDisabled;
-        public bool isLoop;
+        public bool soundLoop;
         [Range(0f, 1f)]
         public float volume;
         [Tooltip("0 -> 2D Sound (global)\n1 -> 3D Sound (from position)")]

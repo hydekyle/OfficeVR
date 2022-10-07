@@ -42,7 +42,7 @@ namespace RPGSystem
             void Play(AudioSource audioSource, AudioClip soundClip, SoundOptions soundOptions, GameObject emitter = null)
             {
                 audioSource.outputAudioMixerGroup = mixerSFX;
-                audioSource.loop = soundOptions.isLoop;
+                audioSource.loop = soundOptions.soundLoop;
                 audioSource.spatialBlend = soundOptions.spatialBlend;
                 audioSource.volume = soundOptions.volume;
                 audioSource.panStereo = soundOptions.stereoPan;

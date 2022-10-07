@@ -20,7 +20,7 @@ namespace RPGSystem
         public List<RPGAction> actionList = new();
         [ShowIf("@this.actionList.Count > 0")]
         public TriggerType trigger = TriggerType.Autorun;
-        [ShowIf("@this.actionList.Count > 0 && trigger == TriggerType.Autorun")]
+        [ShowIf("@this.actionList.Count > 0")]
         public bool isLoop;
         [ShowIf("@this.actionList.Count > 0")]
         public FreezeType freezePlayerAtRun;
@@ -29,7 +29,7 @@ namespace RPGSystem
         [ShowIf("@playSFXOnEnabled != null")]
         public SoundOptions soundOptions = new SoundOptions()
         {
-            isLoop = false,
+            soundLoop = false,
             volume = 1f,
             spatialBlend = 1f,
             stereoPan = 0f,
