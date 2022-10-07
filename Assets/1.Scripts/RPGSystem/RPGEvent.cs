@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityObservables;
 
 namespace RPGSystem
 {
@@ -10,7 +11,7 @@ namespace RPGSystem
     {
         [OnValueChanged("OnValuePageChanged", true)]
         public List<PageEvent> pages = new();
-        int _activePageIndex = -1;
+        Observable<PageEvent> activePageEvent = new();
         List<int> _subscribedLocalVariableList = new();
         List<int> _subscribedSwitchList = new();
         List<int> _subscribedVariableList = new();
@@ -113,24 +114,24 @@ namespace RPGSystem
 
         public PageEvent GetActivePage()
         {
-            return pages[_activePageIndex];
+            return activePageEvent.Value;
         }
 
-        void ApplyPage(int pageIndex)
+        void ApplyPage(PageEvent page)
         {
-            var page = pages[pageIndex];
+            activePageEvent.Value = page;
+            if (page == null) return;
             if (spriteRenderer) spriteRenderer.sprite = page.sprite;
-            if (pageIndex != _activePageIndex)
+            if (page != activePageEvent.Value)
             {
-                if (page.playSFXOnEnabled && _activePageIndex != -1) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, gameObject);
+                if (page.playSFXOnEnabled && activePageEvent.Value != null) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, gameObject);
                 if (page.trigger == TriggerType.Autorun && page.actionList.Count > 0) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
             }
-            _activePageIndex = pageIndex;
         }
 
         public void GetPlayerTouch()
         {
-            if (_activePageIndex == -1) return;
+            if (activePageEvent.Value == null) return;
             var page = GetActivePage();
             if (page.conditions.IsAllConditionOK()) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
         }
@@ -142,13 +143,14 @@ namespace RPGSystem
             {
                 var page = pages[x];
                 var isAllOK = page.conditions.IsAllConditionOK();
-                if (isAllOK && _activePageIndex == x) return;
+                if (isAllOK && activePageEvent.Value == page) return;
                 else if (isAllOK)
                 {
-                    ApplyPage(x);
+                    ApplyPage(page);
                     return;
                 }
             }
+            ApplyPage(null);
         }
 
         void SubscribeToRequiredValueConditions()
