@@ -51,6 +51,7 @@ namespace RPGSystem
     public class CheckConditions : RPGAction
     {
         public VariableTableCondition conditionList;
+        [SerializeReference]
         public RPGAction[] onTrue, onFalse;
 
         public async UniTask Resolve()
