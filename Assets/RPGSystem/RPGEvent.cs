@@ -86,9 +86,16 @@ namespace RPGSystem
                     }
                     else
                     {
-                        var newRenderer = gameObject.AddComponent<SpriteRenderer>();
-                        newRenderer.sprite = pages[x].sprite;
-                        newRenderer.sortingLayerName = "Outside";
+                        try
+                        {
+                            var newRenderer = gameObject.AddComponent<SpriteRenderer>();
+                            newRenderer.sprite = pages[x].sprite;
+                            newRenderer.sortingLayerName = "Outside";
+                        }
+                        catch
+                        {
+                            Debug.LogError("Remove MeshFilter and MeshRenderer from the GameObject first in order to add a Sprite");
+                        }
                     }
                     return;
                 }
