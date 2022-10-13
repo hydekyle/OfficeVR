@@ -39,6 +39,7 @@ namespace RPGSystem
         {
             foreach (var page in pages)
             {
+                page.RPGEventParent = this;
                 if (page.conditions != null) page.conditions.Refresh();
                 if (page.actionList != null)
                     foreach (var action in page.actionList)

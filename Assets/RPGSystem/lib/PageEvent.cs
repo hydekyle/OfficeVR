@@ -36,6 +36,8 @@ namespace RPGSystem
             pitch = 1f
         };
         bool isResolvingActionList = false;
+        [HideInInspector]
+        public RPGEvent RPGEventParent;
 
         public async UniTaskVoid ResolveActionList(CancellationToken cts)
         {
@@ -46,11 +48,12 @@ namespace RPGSystem
             {
                 for (var x = 0; x < actionList.Count; x++)
                 {
+                    if (!Application.isPlaying) return;
                     var action = actionList[x];
                     await action.Resolve().AttachExternalCancellation(cts);
                 }
                 await UniTask.Yield();
-            } while (isLoop && conditions.IsAllConditionOK());
+            } while (isLoop && RPGEventParent.GetActivePage() == this);
             UnfreezeWhile();
             isResolvingActionList = false;
         }
