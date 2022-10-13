@@ -9,28 +9,30 @@ namespace RPGSystem
 {
     public class RPGEvent : MonoBehaviour
     {
+        [Tooltip("The GameObject will be desactivated")]
+        public bool enabledByConditions;
         [OnValueChanged("OnValuePageChanged", true)]
         public List<PageEvent> pages = new();
-        public bool enabledByConditions;
         int activePageIndex = -1;
         List<int> _subscribedLocalVariableList = new();
         List<int> _subscribedSwitchList = new();
         List<int> _subscribedVariableList = new();
         SpriteRenderer spriteRenderer;
 
-        // Called when the component is added for first time
-        void Reset()
+        void Awake()
         {
-            pages.Add(new PageEvent()
-            {
-                sprite = TryGetComponent<SpriteRenderer>(out SpriteRenderer s) ? s.sprite : null
-            });
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        void OnValuePageChanged()
+        void Start()
         {
-            UIShowSprite();
-            UIShowBoxCollider();
+            SubscribeToRequiredValueConditions();
+            CheckAllPageCondition();
+        }
+
+        private void OnDestroy()
+        {
+            UnSubscribeToRequiredConditions();
         }
 
         void OnValidate()
@@ -54,6 +56,21 @@ namespace RPGSystem
                         }
                     }
             }
+        }
+
+        // Called when the component is added for first time
+        void Reset()
+        {
+            pages.Add(new PageEvent()
+            {
+                sprite = TryGetComponent<SpriteRenderer>(out SpriteRenderer s) ? s.sprite : null
+            });
+        }
+
+        void OnValuePageChanged()
+        {
+            UIShowSprite();
+            UIShowBoxCollider();
         }
 
         void UIShowSprite()
@@ -115,22 +132,6 @@ namespace RPGSystem
             }
         }
 
-        void Awake()
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-        }
-
-        void Start()
-        {
-            SubscribeToRequiredValueConditions();
-            CheckAllPageCondition();
-        }
-
-        private void OnDestroy()
-        {
-            UnSubscribeToRequiredConditions();
-        }
-
         public PageEvent GetActivePage()
         {
             return pages[activePageIndex];
@@ -142,6 +143,7 @@ namespace RPGSystem
             if (spriteRenderer) spriteRenderer.sprite = page.sprite;
             if (pageIndex != activePageIndex)
             {
+                if (enabledByConditions) gameObject.SetActive(false);
                 if (page.trigger == TriggerType.Autorun && page.actionList.Count > 0) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
             }
             activePageIndex = pageIndex;
@@ -171,7 +173,6 @@ namespace RPGSystem
                 }
             }
             activePageIndex = -1;
-            if (enabledByConditions) gameObject.SetActive(false);
         }
 
         void SubscribeToRequiredValueConditions()

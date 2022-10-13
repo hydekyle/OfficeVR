@@ -52,7 +52,7 @@ namespace RPGSystem
     {
         public VariableTableCondition conditionList;
         [SerializeReference]
-        public RPGAction[] onTrue, onFalse;
+        public List<RPGAction> onTrue = new(), onFalse = new();
 
         public async UniTask Resolve()
         {
@@ -83,6 +83,9 @@ namespace RPGSystem
         }
     }
 
+    /// <summary>
+    /// Plays a sound effect
+    ///</summary>
     [Serializable]
     public class PlaySE : RPGAction
     {
@@ -146,8 +149,6 @@ namespace RPGSystem
         public int vibrato;
         public bool waitToEnd;
 
-
-
         public async UniTask Resolve()
         {
             switch (type)
@@ -159,6 +160,7 @@ namespace RPGSystem
                 default:
                     return;
             }
+            if (waitToEnd) await UniTask.Delay(TimeSpan.FromSeconds(duration));
         }
     }
 
@@ -174,38 +176,76 @@ namespace RPGSystem
         }
     }
 
-    // [Serializable]
-    // public class TeleportPlayer : RPGAction
-    // {
-    //     [ValueDropdown("GetSceneNameList")]
-    //     public string mapName;
-    //     [Range(0, 10)]
-    //     public int mapSpawnIndex;
-    //     public bool changeFaceDirection;
-    //     [ShowIf("changeFaceDirection")]
-    //     public FaceDirection newFaceDirection;
+    [Serializable]
+    public class ModifyTransform : RPGAction
+    {
+        public OperationType operationType;
+        public Vector3 targetPosition, targetRotation, targetScale;
+        public Transform targetTransform;
+        [Tooltip("Sum values instead replacing them")]
 
-    //     public  async UniTask Resolve()
-    //     {
-    //         var gameData = GameManager.GameData;
-    //         var playerEntity = GameManager.refs.player;
-    //         gameData.savedMapSpawnIndex = mapSpawnIndex;
-    //         gameData.savedFaceDir = changeFaceDirection ? newFaceDirection : playerEntity.faceDirection;
-    //         if (SceneManager.GetActiveScene().name == mapName)
-    //             GameManager.Instance.SpawnPlayer();
-    //         else
-    //             SceneManager.LoadScene(mapName);
-    //     }
+        [Button()]
+        public void TargetMyself()
+        {
+            targetTransform = Selection.activeGameObject.transform;
+        }
 
-    //     public IEnumerable<string> GetSceneNameList()
-    //     {
-    //         var path = Application.dataPath + "/Scenes";
-    //         var directoryInfo = new DirectoryInfo(path);
-    //         var fileList = directoryInfo.GetFiles();
-    //         foreach (var file in fileList)
-    //             if (!file.Name.Contains(".meta")) yield return file.Name.Split(".unity")[0];
-    //     }
-    // }
+        [Button()]
+        public void CopyTargetValues()
+        {
+            targetPosition = targetTransform.position;
+            targetRotation = targetTransform.rotation.eulerAngles;
+            targetScale = targetTransform.localScale;
+        }
+
+        public async UniTask Resolve()
+        {
+            if (operationType == OperationType.Add)
+            {
+                targetTransform.position += targetPosition;
+                targetTransform.rotation = Quaternion.Euler(targetRotation + targetTransform.rotation.eulerAngles);
+                targetTransform.localScale += targetScale;
+            }
+            else if (operationType == OperationType.Replace)
+            {
+                targetTransform.position = targetPosition;
+                targetTransform.rotation = Quaternion.Euler(targetRotation);
+                targetTransform.localScale = targetScale;
+            }
+
+        }
+    }
+
+    [Serializable]
+    public class ModifyMaterialColor : RPGAction
+    {
+        public MeshRenderer targetRenderer;
+        public Color targetColor;
+        public float transitionTime;
+        public bool waitToEnd;
+
+        [Button()]
+        public void TargetMyself()
+        {
+            targetRenderer = Selection.activeGameObject.GetComponent<MeshRenderer>();
+        }
+
+        public async UniTask Resolve()
+        {
+            var material = targetRenderer.material;
+            if (waitToEnd)
+            {
+                var startTime = Time.time;
+                while (Time.time - startTime < transitionTime)
+                {
+                    material.color = Color.Lerp(material.color, targetColor, Time.time - startTime / transitionTime);
+                    Debug.LogWarning(Time.time - startTime / transitionTime);
+                    await UniTask.DelayFrame(1);
+                }
+            }
+            material.color = targetColor;
+        }
+    }
 
 }
 

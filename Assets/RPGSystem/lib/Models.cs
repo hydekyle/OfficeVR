@@ -14,6 +14,7 @@ namespace RPGSystem
     public enum VariableSetType { Set, Add, Sub, Multiply, Random }
     public enum TriggerType { PlayerInteraction, PlayerTouch, Autorun }
     public enum FreezeType { None, FreezeMovement, FreezeInteraction, FreezeAll }
+    public enum OperationType { Replace, Add }
 
     [Serializable]
     public struct SoundOptions
