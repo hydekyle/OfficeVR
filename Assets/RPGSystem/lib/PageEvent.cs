@@ -50,9 +50,18 @@ namespace RPGSystem
                 {
                     if (!Application.isPlaying) return;
                     var action = actionList[x];
+
                     if (action is IWaitable)
-                        await action.Resolve().AttachExternalCancellation(cts);
-                    else action.Resolve().AttachExternalCancellation(cts).Forget();
+                    {
+                        IWaitable waitableAction = (IWaitable)action;
+                        if (waitableAction.WaitEnd)
+                        {
+                            await action.Resolve().AttachExternalCancellation(cts);
+                            continue;
+                        }
+                    }
+                    
+                    action.Resolve().AttachExternalCancellation(cts).Forget();
                 }
                 await UniTask.Yield();
             } while (isLoop && RPGEventParent.GetActivePage() == this);
