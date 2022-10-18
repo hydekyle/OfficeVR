@@ -180,6 +180,7 @@ namespace RPGSystem
                     return;
                 }
             }
+            if (enabledByConditions) gameObject.SetActive(false);
             activePageIndex = -1;
         }
 

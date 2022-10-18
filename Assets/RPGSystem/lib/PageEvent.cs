@@ -17,7 +17,7 @@ namespace RPGSystem
         [GUIColor(1, 1, 0)]
         [ListDrawerSettings(Expanded = true)]
         [SerializeReference]
-        public List<RPGAction> actionList = new();
+        public List<IAction> actionList = new();
         [ShowIf("@this.actionList.Count > 0")]
         public TriggerType trigger = TriggerType.Autorun;
         [ShowIf("@this.actionList.Count > 0")]
@@ -50,7 +50,9 @@ namespace RPGSystem
                 {
                     if (!Application.isPlaying) return;
                     var action = actionList[x];
-                    await action.Resolve().AttachExternalCancellation(cts);
+                    if (action is IWaitable)
+                        await action.Resolve().AttachExternalCancellation(cts);
+                    else action.Resolve().AttachExternalCancellation(cts).Forget();
                 }
                 await UniTask.Yield();
             } while (isLoop && RPGEventParent.GetActivePage() == this);
