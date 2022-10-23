@@ -131,6 +131,7 @@ namespace RPGSystem
         public GameObject target;
         [TableColumnWidth(30)]
         public int value;
+#if UNITY_EDITOR
         [VerticalGroup("target/btn")]
         [TableColumnWidth(90)]
         [Button("Self")]
@@ -138,6 +139,8 @@ namespace RPGSystem
         {
             target = Selection.activeGameObject;
         }
+#endif
+
         [HideLabel]
         public Conditionality conditionality;
 
@@ -164,10 +167,14 @@ namespace RPGSystem
         [VerticalGroup("target/btn")]
         [TableColumnWidth(90)]
         [Button("Self")]
+
+#if UNITY_EDITOR
         public void SaveID()
         {
             target = Selection.activeGameObject;
         }
+#endif
+
 
         public int ID()
         {
@@ -216,6 +223,7 @@ namespace RPGSystem
         void Save()
         {
             SaveNewSwitch(ID, inputText, isVariable);
+#if UNITY_EDITOR
             if (Selection.activeGameObject.TryGetComponent<RPGEvent>(out var e))
                 foreach (var page in e.pages)
                 {
@@ -235,6 +243,8 @@ namespace RPGSystem
                         }
                     }
                 }
+#endif
+
             editorWindow.Close();
         }
 

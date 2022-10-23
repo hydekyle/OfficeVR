@@ -89,6 +89,16 @@ namespace RPGSystem
         }
     }
 
+    [Serializable]
+    public class Pinga : IAction
+    {
+        public UnityEvent unityEvent;
+        public async UniTask Resolve()
+        {
+            unityEvent.Invoke();
+        }
+    }
+
     /// <summary>
     /// Plays a sound effect
     ///</summary>
@@ -110,11 +120,15 @@ namespace RPGSystem
         public bool waitEnd = false;
         public bool WaitEnd { get => waitEnd; set => waitEnd = value; }
 
+#if UNITY_EDITOR
         [Button("Set myself as emitter")]
         public void EmitterMyself()
         {
             emitter = Selection.activeGameObject;
         }
+#endif
+
+
 
         [Button("Global Emitter")]
         public void EmitterGlobal()
@@ -154,12 +168,14 @@ namespace RPGSystem
         public int vibrato;
         public bool waitEnd = false;
         public bool WaitEnd { get => waitEnd; set => waitEnd = value; }
-
+#if UNITY_EDITOR
         [Button()]
         public void TargetMyself()
         {
             targetTransform = Selection.activeGameObject.transform;
         }
+#endif
+
 
         public async UniTask Resolve()
         {
@@ -195,12 +211,14 @@ namespace RPGSystem
         public Vector3 targetPosition, targetRotation, targetScale;
         public Transform targetTransform;
         [Tooltip("Sum values instead replacing them")]
-
+#if UNITY_EDITOR
         [Button()]
         public void TargetMyself()
         {
             targetTransform = Selection.activeGameObject.transform;
         }
+#endif
+
 
         [Button()]
         public void CopyTargetValues()
@@ -238,12 +256,14 @@ namespace RPGSystem
         public Material newMaterial;
         public bool waitEnd = false;
         public bool WaitEnd { get => waitEnd; set => waitEnd = value; }
-
+#if UNITY_EDITOR
         [Button()]
         public void TargetMyself()
         {
             targetRenderer = Selection.activeGameObject.GetComponent<MeshRenderer>();
         }
+#endif
+
 
         public async UniTask Resolve()
         {

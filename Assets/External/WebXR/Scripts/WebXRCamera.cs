@@ -12,6 +12,7 @@ namespace WebXR
         private bool xrActive;
         private WaitForEndOfFrame wait = new WaitForEndOfFrame();
         private Coroutine postRenderCoroutine;
+        public bool isPreviewMode;
 
         [DllImport("__Internal")]
         private static extern void XRPostRender();
@@ -34,7 +35,7 @@ namespace WebXR
             cameraMain.transform.localPosition = new Vector3(0, WebXRManager.Instance.DefaultHeight, 0);
 
 #if UNITY_EDITOR
-			// No editor specific funtionality
+            // No editor specific funtionality
 #elif UNITY_WEBGL
 			postRenderCoroutine = StartCoroutine(endOfFrame());
 #endif
@@ -42,11 +43,11 @@ namespace WebXR
 
         private void OnDisable()
         {
-			if (postRenderCoroutine != null)
-			{
-				StopCoroutine(postRenderCoroutine);
-			}
-		}
+            if (postRenderCoroutine != null)
+            {
+                StopCoroutine(postRenderCoroutine);
+            }
+        }
 
         private void onVRChange(WebXRState state)
         {
@@ -88,7 +89,8 @@ namespace WebXR
             List<InputDevice> devices = new List<InputDevice>();
             InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeadMounted, devices);
             bool XRisPresent = devices.Count > 0;
-            if (XRisPresent) { 
+            if (XRisPresent)
+            {
                 List<XRNodeState> mNodeStates = new List<XRNodeState>();
                 InputTracking.GetNodeStates(mNodeStates);
 
@@ -102,15 +104,15 @@ namespace WebXR
                             nodeState.TryGetPosition(out mHeadPos);
                             nodeState.TryGetRotation(out mHeadRot);
                             break;
-                   
+
                     }
                 }
                 cameraMain.transform.localPosition = mHeadPos;
                 cameraMain.transform.localRotation = mHeadRot.normalized;
             }
         }
-	#endif
-	
+#endif
+
     }
 
 }

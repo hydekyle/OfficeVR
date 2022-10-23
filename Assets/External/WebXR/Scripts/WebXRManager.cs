@@ -298,6 +298,7 @@ namespace WebXR
         public LayerMask clickRayLayerMask;
         public float walkToPointDelay = 1f;
         public BoxCollider boundariesCollider;
+        public WebXRCamera myXRCamera;
 
         async UniTask ClickToMove()
         {
