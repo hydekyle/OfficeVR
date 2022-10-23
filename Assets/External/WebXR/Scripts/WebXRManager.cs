@@ -298,10 +298,10 @@ namespace WebXR
         public LayerMask clickRayLayerMask;
         public float walkToPointDelay = 1f;
         public BoxCollider boundariesCollider;
-        public WebXRCamera myXRCamera;
 
         async UniTask ClickToMove()
         {
+            if (GameManager.isPreviewMode) return;
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, clickRayLayerMask);
 

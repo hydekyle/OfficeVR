@@ -12,7 +12,6 @@ namespace WebXR
         private bool xrActive;
         private WaitForEndOfFrame wait = new WaitForEndOfFrame();
         private Coroutine postRenderCoroutine;
-        public bool isPreviewMode;
 
         [DllImport("__Internal")]
         private static extern void XRPostRender();

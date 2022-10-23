@@ -2,7 +2,8 @@
 using WebXR;
 
 [RequireComponent(typeof(Camera))]
-public class DesertFreeFlightController : MonoBehaviour {
+public class DesertFreeFlightController : MonoBehaviour
+{
     [Tooltip("Enable/disable rotation control. For use in Unity editor only.")]
     public bool rotationEnabled = true;
 
@@ -59,7 +60,8 @@ public class DesertFreeFlightController : MonoBehaviour {
         EnableAccordingToPlatform();
     }
 
-    void Update() {
+    void Update()
+    {
         if (translationEnabled)
         {
             float x = Input.GetAxis("Horizontal") * Time.deltaTime * straffeSpeed;
@@ -68,7 +70,7 @@ public class DesertFreeFlightController : MonoBehaviour {
             transform.Translate(x, 0, z);
         }
 
-        if (rotationEnabled)
+        if (rotationEnabled && !GameManager.isPreviewMode)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -83,11 +85,11 @@ public class DesertFreeFlightController : MonoBehaviour {
                 rotationX += axisDelta.x * mouseSensitivity;
                 rotationY += axisDelta.y * mouseSensitivity;
 
-                rotationX = ClampAngle (rotationX, minimumX, maximumX);
-                rotationY = ClampAngle (rotationY, minimumY, maximumY);
+                rotationX = ClampAngle(rotationX, minimumX, maximumX);
+                rotationY = ClampAngle(rotationY, minimumY, maximumY);
 
-                Quaternion xQuaternion = Quaternion.AngleAxis (rotationX, Vector3.up);
-                Quaternion yQuaternion = Quaternion.AngleAxis (rotationY, Vector3.left);
+                Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
+                Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
 
                 transform.localRotation = originalRotation * xQuaternion * yQuaternion;
             }
@@ -108,12 +110,12 @@ public class DesertFreeFlightController : MonoBehaviour {
         rotationEnabled = translationEnabled = !capabilities.supportsImmersiveVR;
     }
 
-    public static float ClampAngle (float angle, float min, float max)
+    public static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360f)
             angle += 360f;
         if (angle > 360f)
             angle -= 360f;
-        return Mathf.Clamp (angle, min, max);
+        return Mathf.Clamp(angle, min, max);
     }
 }
