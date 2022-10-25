@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using RPGSystem;
@@ -9,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public Expositor expositor;
+    public List<SpotPoint> spotPoints;
     [HideInInspector]
     public static bool isPreviewMode;
 
@@ -21,7 +23,18 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) expositor.Move(-1);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) expositor.Move(1);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) spotPoints[0].Apply();
+        if (Input.GetKeyDown(KeyCode.Alpha2)) spotPoints[1].Apply();
+    }
+}
+
+[Serializable]
+public class SpotPoint
+{
+    public Texture skyTexture;
+
+    public void Apply()
+    {
+        RenderSettings.skybox.SetTexture("_Tex", skyTexture);
     }
 }
