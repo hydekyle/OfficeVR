@@ -24,7 +24,7 @@ RenderSettings:
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1.5
-  m_AmbientMode: 0
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 1234d3545e4dd5d419c52ccaa1234373, type: 2}
   m_HaloStrength: 0.5
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 82741410}
-  m_IndirectSpecularColor: {r: 0.52873445, g: 0.48920858, b: 0.43863314, a: 1}
+  m_IndirectSpecularColor: {r: 0.5266547, g: 0.48696655, b: 0.43711302, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5381,6 +5381,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expositor: {fileID: 1365224851}
+  spotPoints:
+  - skyTexture: {fileID: 8900000, guid: dc4ecb9e266f3e94884098b4099bdba3, type: 3}
+  - skyTexture: {fileID: 8900000, guid: ba5b4e11ffa0d7b4ca5bd58cd7b69dfd, type: 3}
+  - skyTexture: {fileID: 8900000, guid: ec1561461dcb12943be9f16795856870, type: 3}
+  - skyTexture: {fileID: 8900000, guid: 02e55690f5d09374bacf2df945595ef3, type: 3}
+  - skyTexture: {fileID: 8900000, guid: be0e3673e6e5fa34dba91f948ece0b38, type: 3}
+  - skyTexture: {fileID: 8900000, guid: 36d6e26ea41061b408d204041ebacecf, type: 3}
+  - skyTexture: {fileID: 8900000, guid: c1d20e8b9aa856b42abaeee5413cca2a, type: 3}
+  - skyTexture: {fileID: 8900000, guid: 36c0de2489419fa43899b156f1bb019e, type: 3}
 --- !u!4 &1040905888
 Transform:
   m_ObjectHideFlags: 0
