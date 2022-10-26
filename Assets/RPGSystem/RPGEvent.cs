@@ -9,8 +9,6 @@ namespace RPGSystem
 {
     public class RPGEvent : MonoBehaviour
     {
-        [Tooltip("The GameObject will be desactivated")]
-        public bool enabledByConditions;
         [OnValueChanged("OnValuePageChanged", true)]
         public List<PageEvent> pages = new();
         int activePageIndex = -1;
@@ -147,16 +145,17 @@ namespace RPGSystem
 
         void ApplyPage(int pageIndex)
         {
+            print("fucking aplico");
             var page = pages[pageIndex];
             if (spriteRenderer) spriteRenderer.sprite = page.sprite;
             if (pageIndex != activePageIndex)
             {
-                if (enabledByConditions) gameObject.SetActive(false);
                 if (page.trigger == TriggerType.Autorun && page.actionList.Count > 0) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
+                activePageIndex = pageIndex;
+                print("fucking seteo");
+                gameObject.SetActive(true);
+                if (page.playSFXOnEnabled) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, page.soundOptions, gameObject);
             }
-            activePageIndex = pageIndex;
-            if (enabledByConditions) gameObject.SetActive(true);
-            if (page.playSFXOnEnabled) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, page.soundOptions, gameObject);
         }
 
         public void TriggerPageActionList()
@@ -169,6 +168,7 @@ namespace RPGSystem
         // Called every time a required switch or variable changes the value
         void CheckAllPageCondition()
         {
+            print(activePageIndex);
             for (var x = pages.Count - 1; x >= 0; x--)
             {
                 var page = pages[x];
@@ -180,7 +180,7 @@ namespace RPGSystem
                     return;
                 }
             }
-            if (enabledByConditions) gameObject.SetActive(false);
+            gameObject.SetActive(false);
             activePageIndex = -1;
         }
 

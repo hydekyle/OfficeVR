@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
         moveIndex.OnChanged += () =>
         {
             WalkTo(spotPoints[moveIndex.Value]).Forget();
+            RPGManager.GameData.AddToVariable(0, moveIndex.Value);
+            //print(moveIndex.Value);
         };
     }
 
@@ -39,16 +41,23 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha1)) MoveIndex(-1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) MoveIndex(1);
         if (Input.GetKeyDown(KeyCode.F1)) rManager.Save(moveIndex.Value);
         // if (Input.GetKeyDown(KeyCode.F2)) Load();
+#endif
     }
 
     int MoveIndex(int adition)
     {
         moveIndex.Value = Mathf.Clamp(moveIndex.Value + adition, 0, spotPoints.Count - 1);
         return moveIndex.Value;
+    }
+
+    public void MoveToIndex(int index)
+    {
+        moveIndex.Value = index;
     }
 
     async UniTaskVoid WalkTo(SpotPoint spotPoint)
