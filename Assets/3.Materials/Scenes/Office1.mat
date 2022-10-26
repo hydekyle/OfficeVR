@@ -73,7 +73,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OverlayTex:
-        m_Texture: {fileID: 8900000, guid: dc4ecb9e266f3e94884098b4099bdba3, type: 3}
+        m_Texture: {fileID: 8900000, guid: 36d6e26ea41061b408d204041ebacecf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
@@ -89,7 +89,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex:
-        m_Texture: {fileID: 8900000, guid: dc4ecb9e266f3e94884098b4099bdba3, type: 3}
+        m_Texture: {fileID: 8900000, guid: c1d20e8b9aa856b42abaeee5413cca2a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _UpTex:
