@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public static bool isPreviewMode;
     [HideInInspector]
     SpotPoint actualSpotPoint;
+    int moveIndex = 0;
 
     void Awake()
     {
@@ -26,8 +27,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) WalkTo(spotPoints[0]).Forget();
-        if (Input.GetKeyDown(KeyCode.Alpha2)) WalkTo(spotPoints[1]).Forget();
+        if (Input.GetKeyDown(KeyCode.Alpha1)) WalkTo(spotPoints[MoveIndex(-1)]).Forget();
+        if (Input.GetKeyDown(KeyCode.Alpha2)) WalkTo(spotPoints[MoveIndex(1)]).Forget();
+    }
+
+    int MoveIndex(int adition)
+    {
+        moveIndex = Mathf.Clamp(moveIndex + adition, 0, spotPoints.Count - 1);
+        return moveIndex;
     }
 
     async UniTaskVoid WalkTo(SpotPoint spotPoint)
@@ -45,6 +52,7 @@ public class GameManager : MonoBehaviour
             RenderSettings.skybox.SetFloat("_Blend", t);
             //camera.focalLength = Mathf.Lerp(camera.focalLength, targetFocalLenght, t);
             await UniTask.DelayFrame(1);
+            print("vaya");
         }
         RenderSettings.skybox.SetTexture("_Tex", spotPoint.skyTexture);
         RenderSettings.skybox.SetTexture("_OverlayTex", actualSpotPoint.skyTexture);
