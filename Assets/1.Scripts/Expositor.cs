@@ -16,6 +16,7 @@ public class Expositor : MonoBehaviour, IExpositionable
     Transform lastItemParent;
     Transform childPreview;
     bool isPreviewModeActive = false;
+    public Material publicMaterial;
 
     #region ItemRotationController
     [Tooltip("Mouse sensitivity")]
@@ -37,6 +38,8 @@ public class Expositor : MonoBehaviour, IExpositionable
     private Vector3 axisLastFrame;
     private Vector3 axisDelta;
     #endregion
+
+    bool isAnimating = false;
 
     void Start()
     {
@@ -76,8 +79,20 @@ public class Expositor : MonoBehaviour, IExpositionable
         previewIndex += moveIndex;
         if (previewIndex > items.Count - 1) previewIndex = 0;
         if (previewIndex < 0) previewIndex = items.Count - 1;
+        PintadaWapa();
     }
-    bool isAnimating = false;
+
+    public Color blueColor, blackColor, redColor;
+
+    void PintadaWapa()
+    {
+        if (previewIndex == 0)
+            publicMaterial.color = blueColor;
+        else if (previewIndex == 1)
+            publicMaterial.color = blackColor;
+        else if (previewIndex == 2)
+            publicMaterial.color = redColor;
+    }
 
     public void Preview()
     {

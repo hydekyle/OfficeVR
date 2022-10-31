@@ -107,7 +107,7 @@ public class DesertFreeFlightController : MonoBehaviour
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray, Mathf.Infinity, clickRayLayerMask);
 
-        if (hits[0].transform != null)
+        if (hits.Length > 0 && hits[0].transform != null)
         {
             if (hits[0].transform.TryGetComponent<IExpositionable>(out var expo))
             {
