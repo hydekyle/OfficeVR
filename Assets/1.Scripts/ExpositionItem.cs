@@ -45,8 +45,6 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
 
     void Start()
     {
-        originPosition = transform.position;
-        originRotation = transform.rotation;
         attachedCamera = Camera.main;
         originalRotation = previewT.localRotation;
     }
@@ -71,6 +69,8 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
     async UniTaskVoid _PreviewSelected()
     {
         isPreviewModeActive = isAnimating = true;
+        originPosition = transform.position;
+        originRotation = transform.rotation;
         var t = 0f;
         while (t < 1f)
         {

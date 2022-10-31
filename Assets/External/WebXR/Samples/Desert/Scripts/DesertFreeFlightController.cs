@@ -113,6 +113,8 @@ public class DesertFreeFlightController : MonoBehaviour
             {
                 activeExposition = expo;
                 expo.Preview();
+                rotationX = 0;
+                rotationY = 0;
             }
 
             if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
