@@ -62,13 +62,14 @@ public class DesertFreeFlightController : MonoBehaviour
 
     void Update()
     {
-        if (translationEnabled)
-        {
-            float x = Input.GetAxis("Horizontal") * Time.deltaTime * straffeSpeed;
-            float z = Input.GetAxis("Vertical") * Time.deltaTime * straffeSpeed;
+        // if (translationEnabled)
+        // {
+        //     float x = Input.GetAxis("Horizontal") * Time.deltaTime * straffeSpeed;
+        //     float z = Input.GetAxis("Vertical") * Time.deltaTime * straffeSpeed;
+        //     transform.Translate(x, 0, z);
+        // }
 
-            transform.Translate(x, 0, z);
-        }
+        attachedCamera.focalLength = Mathf.Clamp(attachedCamera.focalLength + Input.mouseScrollDelta.y * 2, 12, 48);
 
         if (rotationEnabled && !GameManager.isPreviewMode)
         {

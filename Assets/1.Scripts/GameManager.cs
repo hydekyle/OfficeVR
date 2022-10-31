@@ -84,6 +84,11 @@ public class GameManager : MonoBehaviour
         actualSpotPoint = spotPoint;
     }
 
+    public void Back()
+    {
+        if (isPreviewMode) expositor.EscapePreview().Forget();
+    }
+
     // public void Save()
     // {
     //     var fileName = "/savedata";
