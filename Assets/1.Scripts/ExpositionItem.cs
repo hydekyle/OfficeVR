@@ -7,6 +7,7 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
 {
     public Transform previewT;
     Vector3 originPosition;
+    Quaternion originRotation;
     bool isAnimating = false;
     bool isPreviewModeActive = false;
 
@@ -31,9 +32,21 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
     private Vector3 axisDelta;
     #endregion
 
+    // This is called when this component is added to a GameObject to save time for devs
+    void Reset()
+    {
+        if (!TryGetComponent<Collider>(out var col))
+        {
+            var newCollider = gameObject.AddComponent<BoxCollider>();
+            newCollider.isTrigger = true;
+            this.previewT = GameObject.Find("[Preview]").transform;
+        }
+    }
+
     void Start()
     {
         originPosition = transform.position;
+        originRotation = transform.rotation;
         attachedCamera = Camera.main;
         originalRotation = previewT.localRotation;
     }
@@ -60,8 +73,6 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
     async UniTaskVoid _PreviewSelected()
     {
         isPreviewModeActive = isAnimating = true;
-        rotationX = 0f;
-        rotationY = 0f;
         var t = 0f;
         while (t < 1f)
         {
@@ -72,7 +83,15 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
         }
         transform.position = previewT.position;
         transform.rotation = Quaternion.Euler(Vector3.zero);
+        ResetMouseRotationValues();
         isAnimating = false;
+    }
+
+    void ResetMouseRotationValues()
+    {
+        rotationX = 0f;
+        rotationY = 0f;
+        axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
     }
 
     public void EscapePreview()
@@ -80,25 +99,25 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
         _EscapePreview().Forget();
     }
 
-    public async UniTask _EscapePreview()
+    async UniTask _EscapePreview()
     {
         if (isAnimating) return;
         isAnimating = true;
         var t = 0f;
-        while (t < 1f)
+        do
         {
+            t = Mathf.MoveTowards(t, 1f, Time.deltaTime * 2);
             transform.position = Vector3.Lerp(previewT.position, originPosition, t);
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(Vector3.zero), t);
-            t += Time.deltaTime * 2;
+            transform.rotation = Quaternion.Lerp(transform.rotation, originRotation, t);
             await UniTask.DelayFrame(1);
-        }
+        } while (t < 1f);
         isAnimating = false;
         isPreviewModeActive = false;
     }
 
     void RotatePreview()
     {
-        if (isPreviewModeActive)
+        if (isPreviewModeActive && !isAnimating)
         {
             if (Input.GetMouseButtonDown(0))
             {

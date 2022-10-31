@@ -65,7 +65,7 @@ public class Expositor : MonoBehaviour, IExpositionable
         var targetRot = (360 / items.Count) * index;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(Vector3.up * targetRot), Time.deltaTime * rotationVelocity);
         RotatePreview();
-        if (isPreviewModeActive && Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) EscapePreview();
+        //if (isPreviewModeActive && Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) EscapePreview();
     }
 
     public async void Move(int moveIndex)

@@ -119,13 +119,15 @@ public class DesertFreeFlightController : MonoBehaviour
 
         if (hits[0].transform != null)
         {
+            if (hits[0].transform.TryGetComponent<IExpositionable>(out var expo))
+            {
+                activeExposition = expo;
+                expo.Preview();
+            }
+
             if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
             {
                 rpgEvent.TriggerPageActionList();
-                if (hits[0].transform.TryGetComponent<IExpositionable>(out var expo))
-                {
-                    activeExposition = expo;
-                }
             }
         }
     }
