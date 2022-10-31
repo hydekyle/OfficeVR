@@ -170,4 +170,8 @@ public class Expositor : MonoBehaviour, IExpositionable
         return Mathf.Clamp(angle, min, max);
     }
 
+    public bool IsBusy()
+    {
+        return isAnimating || isPreviewModeActive;
+    }
 }

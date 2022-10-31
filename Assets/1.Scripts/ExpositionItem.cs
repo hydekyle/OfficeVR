@@ -65,9 +65,7 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
 
     public void Preview()
     {
-        if (isAnimating) return;
-        if (isPreviewModeActive) EscapePreview();
-        else _PreviewSelected().Forget();
+        if (!isPreviewModeActive && !isAnimating) _PreviewSelected().Forget();
     }
 
     async UniTaskVoid _PreviewSelected()
@@ -101,7 +99,7 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
 
     async UniTask _EscapePreview()
     {
-        if (isAnimating) return;
+        if (isAnimating || !isPreviewModeActive) return;
         isAnimating = true;
         var t = 0f;
         do
@@ -132,9 +130,6 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
                 rotationX += axisDelta.x * mouseSensitivity;
                 rotationY += axisDelta.y * mouseSensitivity;
 
-                rotationX = ClampAngle(rotationX, minimumX, maximumX);
-                rotationY = ClampAngle(rotationY, minimumY, maximumY);
-
                 Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
                 Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
 
@@ -143,13 +138,8 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
         }
     }
 
-    public static float ClampAngle(float angle, float min, float max)
+    public bool IsBusy()
     {
-        if (angle < -360f)
-            angle += 360f;
-        if (angle > 360f)
-            angle -= 360f;
-        return Mathf.Clamp(angle, min, max);
+        return isAnimating || isPreviewModeActive;
     }
-
 }

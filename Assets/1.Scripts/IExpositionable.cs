@@ -6,4 +6,5 @@ public interface IExpositionable
 {
     public void Preview();
     public void EscapePreview();
+    public bool IsBusy();
 }

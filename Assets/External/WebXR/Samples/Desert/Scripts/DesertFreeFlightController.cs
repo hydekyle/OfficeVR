@@ -7,9 +7,7 @@ using WebXR;
 [RequireComponent(typeof(Camera))]
 public class DesertFreeFlightController : MonoBehaviour
 {
-    [Tooltip("Enable/disable rotation control. For use in Unity editor only.")]
-    public bool rotationEnabled = true;
-
+    #region RotationParameters
     [Tooltip("Enable/disable translation control. For use in Unity editor only.")]
     public bool translationEnabled = true;
 
@@ -31,24 +29,20 @@ public class DesertFreeFlightController : MonoBehaviour
     private float rotationY = 0f;
 
     Quaternion originalRotation;
-
     private Camera attachedCamera;
     private Vector3 axis;
     private Vector3 axisLastFrame;
     private Vector3 axisDelta;
+    #endregion
 
-    RaycastHit[] hits = new RaycastHit[1];
-    bool isMoving = false;
-    float playerHeight = 1.8f;
-    public float movementSpeed = 0.2f;
     public LayerMask clickRayLayerMask;
-    public float walkToPointDelay = 1f;
-
     public float dragVsClickTime = 0.1f;
-    float lastTimeClick = -999f;
+    public float timeForClickBehavior = 0.6f;
+    float lastTimeClick = -9f;
     Vector3 lastPositionClick;
-    CancellationTokenSource sourceClickToMove = new();
+
     IExpositionable activeExposition;
+    CancellationTokenSource sourceClickToMove = new();
 
     void Start()
     {
@@ -60,42 +54,42 @@ public class DesertFreeFlightController : MonoBehaviour
     {
         attachedCamera.focalLength = Mathf.Clamp(attachedCamera.focalLength + Input.mouseScrollDelta.y * 2, 12, 48);
 
-        if (rotationEnabled && activeExposition == null)
+        if (activeExposition != null && activeExposition.IsBusy()) return;
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
+            axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
+            lastTimeClick = Time.time;
+            lastPositionClick = Input.mousePosition;
+        }
+        if (Input.GetMouseButton(0))
+        {
+            axis = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
+            axisDelta = (axisLastFrame - axis) * 90f;
+            axisLastFrame = axis;
+
+            rotationX += axisDelta.x * mouseSensitivity;
+            rotationY += axisDelta.y * mouseSensitivity;
+
+            rotationX = ClampAngle(rotationX, minimumX, maximumX);
+            rotationY = ClampAngle(rotationY, minimumY, maximumY);
+
+            Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
+            Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
+
+            transform.localRotation = originalRotation * xQuaternion * yQuaternion;
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (timeForClickBehavior + lastTimeClick < Time.time) return;
+            if (lastPositionClick == Input.mousePosition)
             {
-                axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
-                lastTimeClick = Time.time;
-                lastPositionClick = Input.mousePosition;
-            }
-            if (Input.GetMouseButton(0))
-            {
-                axis = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
-                axisDelta = (axisLastFrame - axis) * 90f;
-                axisLastFrame = axis;
-
-                rotationX += axisDelta.x * mouseSensitivity;
-                rotationY += axisDelta.y * mouseSensitivity;
-
-                rotationX = ClampAngle(rotationX, minimumX, maximumX);
-                rotationY = ClampAngle(rotationY, minimumY, maximumY);
-
-                Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
-                Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
-
-                transform.localRotation = originalRotation * xQuaternion * yQuaternion;
-
-                if (isMoving) return;
-                if (lastPositionClick == Input.mousePosition)
-                {
-                    sourceClickToMove.Cancel();
-                    ClickToMove();
-                    return;
-                }
-                if (lastTimeClick + dragVsClickTime < Time.time) return;
                 sourceClickToMove.Cancel();
                 ClickToMove();
+                return;
             }
+            if (lastTimeClick + dragVsClickTime < Time.time) return;
+            sourceClickToMove.Cancel();
+            ClickToMove();
         }
     }
 
@@ -110,12 +104,8 @@ public class DesertFreeFlightController : MonoBehaviour
 
     void ClickToMove()
     {
-        if (activeExposition != null) return;
-        var lastHit = hits[0];
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, clickRayLayerMask);
-
-        if (lastHit.GetHashCode() == hits[0].GetHashCode()) return;
+        var hits = Physics.RaycastAll(ray, Mathf.Infinity, clickRayLayerMask);
 
         if (hits[0].transform != null)
         {
