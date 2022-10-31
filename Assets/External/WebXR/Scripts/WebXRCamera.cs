@@ -16,6 +16,38 @@ namespace WebXR
         [DllImport("__Internal")]
         private static extern void XRPostRender();
 
+#if UNITY_EDITOR || !UNITY_WEBGL
+        //Update Camera position according to Unity XR, if not using WebGL
+        private void Update()
+        {
+            List<InputDevice> devices = new List<InputDevice>();
+            InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeadMounted, devices);
+            bool XRisPresent = devices.Count > 0;
+            if (XRisPresent)
+            {
+                List<XRNodeState> mNodeStates = new List<XRNodeState>();
+                InputTracking.GetNodeStates(mNodeStates);
+
+                Vector3 mHeadPos = Vector3.zero;
+                Quaternion mHeadRot = Quaternion.identity;
+                foreach (XRNodeState nodeState in mNodeStates)
+                {
+                    switch (nodeState.nodeType)
+                    {
+                        case XRNode.Head:
+                            nodeState.TryGetPosition(out mHeadPos);
+                            nodeState.TryGetRotation(out mHeadRot);
+                            break;
+
+                    }
+                }
+                // cameraMain.transform.localPosition = mHeadPos;
+                // cameraMain.transform.localRotation = mHeadRot.normalized;
+            }
+
+        }
+#endif
+
         private IEnumerator endOfFrame()
         {
             // Wait until end of frame to report back to WebXR browser to submit frame.
@@ -30,13 +62,9 @@ namespace WebXR
         {
             WebXRManager.Instance.OnXRChange += onVRChange;
             WebXRManager.Instance.OnHeadsetUpdate += onHeadsetUpdate;
-
-            cameraMain.transform.localPosition = new Vector3(0, WebXRManager.Instance.DefaultHeight, 0);
-
-#if UNITY_EDITOR
-            // No editor specific funtionality
-#elif UNITY_WEBGL
-			postRenderCoroutine = StartCoroutine(endOfFrame());
+            //cameraMain.transform.localPosition = new Vector3(0, WebXRManager.Instance.DefaultHeight, 0);
+#if UNITY_WEBGL
+            postRenderCoroutine = StartCoroutine(endOfFrame());
 #endif
         }
 
@@ -81,37 +109,6 @@ namespace WebXR
                 cameraR.projectionMatrix = rightProjectionMatrix;
             }
         }
-#if UNITY_EDITOR || !UNITY_WEBGL
-        //Update Camera position according to Unity XR, if not using WebGL
-        private void Update()
-        {
-            List<InputDevice> devices = new List<InputDevice>();
-            InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeadMounted, devices);
-            bool XRisPresent = devices.Count > 0;
-            if (XRisPresent)
-            {
-                List<XRNodeState> mNodeStates = new List<XRNodeState>();
-                InputTracking.GetNodeStates(mNodeStates);
-
-                Vector3 mHeadPos = Vector3.zero;
-                Quaternion mHeadRot = Quaternion.identity;
-                foreach (XRNodeState nodeState in mNodeStates)
-                {
-                    switch (nodeState.nodeType)
-                    {
-                        case XRNode.Head:
-                            nodeState.TryGetPosition(out mHeadPos);
-                            nodeState.TryGetRotation(out mHeadRot);
-                            break;
-
-                    }
-                }
-                cameraMain.transform.localPosition = mHeadPos;
-                cameraMain.transform.localRotation = mHeadRot.normalized;
-            }
-        }
-#endif
 
     }
-
 }

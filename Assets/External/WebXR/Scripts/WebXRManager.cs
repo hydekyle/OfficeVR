@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR;
 using System.Runtime.InteropServices;
-using System.Collections;
-using Cysharp.Threading.Tasks;
-using System.Threading;
-using RPGSystem;
 
 namespace WebXR
 {
@@ -67,17 +63,14 @@ namespace WebXR
         // link WebGL plugin for interacting with browser scripts.
         [DllImport("__Internal")]
         private static extern void ConfigureToggleXRKeyName(string keyName);
-
         [DllImport("__Internal")]
         private static extern void XRInitSharedArray(float[] array, int length);
-
         [DllImport("__Internal")]
         private static extern void ListenWebXRData();
 
         // Shared array which we will load headset data in from webxr.jslib
         // Array stores  5 matrices, each 16 values, stored linearly.
         float[] sharedArray = new float[5 * 16];
-
         private WebXRDisplayCapabilities _capabilities;
 
         public static WebXRManager Instance
@@ -134,33 +127,8 @@ namespace WebXR
             SetTrackingSpaceType();
         }
 
-        public float dragVsClickTime = 0.1f;
-        float lastTimeClick = -999f;
-        Vector3 lastPositionClick;
-        CancellationTokenSource sourceClickToMove = new();
-
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                lastTimeClick = Time.time;
-                lastPositionClick = Input.mousePosition;
-            }
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                if (isMoving) return;
-                if (xrState != WebXRState.NORMAL) return;
-                if (lastPositionClick == Input.mousePosition)
-                {
-                    sourceClickToMove.Cancel();
-                    ClickToMove().AttachExternalCancellation(sourceClickToMove.Token).Forget();
-                    return;
-                }
-                if (lastTimeClick + dragVsClickTime < Time.time) return;
-                sourceClickToMove.Cancel();
-                ClickToMove().AttachExternalCancellation(sourceClickToMove.Token).Forget();
-            }
 
 #if UNITY_EDITOR || !UNITY_WEBGL
             if (string.IsNullOrEmpty(toggleXRKeyName))
@@ -289,49 +257,6 @@ namespace WebXR
             }
 
             return newArray;
-        }
-
-        RaycastHit[] hits = new RaycastHit[1];
-        bool isMoving = false;
-        float playerHeight = 1.8f;
-        public float movementSpeed = 0.2f;
-        public LayerMask clickRayLayerMask;
-        public float walkToPointDelay = 1f;
-        public BoxCollider boundariesCollider;
-
-        async UniTask ClickToMove()
-        {
-            if (GameManager.isPreviewMode) return;
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, clickRayLayerMask);
-
-            if (hits[0].transform != null)
-            {
-                if (hits[0].transform.gameObject.layer == LayerMask.NameToLayer("Walkable"))
-                {
-                    var posX = Mathf.Clamp(hits[0].point.x, boundariesCollider.bounds.min.x, boundariesCollider.bounds.max.x);
-                    var posZ = Mathf.Clamp(hits[0].point.z, boundariesCollider.bounds.min.z, boundariesCollider.bounds.max.z);
-                    var targetPosition = new Vector3(posX, transform.position.y, posZ);
-                    isMoving = true;
-                    float startTime = Time.time;
-                    while (Time.time - startTime < walkToPointDelay)
-                    {
-                        var elapsedTime = Time.time - startTime;
-                        transform.position = Vector3.Slerp(transform.position, targetPosition, elapsedTime);
-                        await UniTask.Yield();
-                    }
-                    transform.position = targetPosition;
-                    isMoving = false;
-                }
-                else
-                {
-                    if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
-                    {
-                        rpgEvent.TriggerPageActionList();
-                    }
-                }
-            }
-
         }
 
     }

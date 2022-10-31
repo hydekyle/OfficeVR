@@ -124,11 +124,14 @@ namespace RPGSystem
         {
             if (pages.Exists(page => page.trigger == TriggerType.PlayerInteraction || page.trigger == TriggerType.PlayerTouch))
             {
-                if (!TryGetComponent<MeshCollider>(out MeshCollider boxCollider))
+                if (!TryGetComponent<Collider>(out Collider collider))
                 {
-                    var newCollider = gameObject.AddComponent<MeshCollider>();
-                    newCollider.convex = true;
-                    newCollider.isTrigger = true;
+                    if (TryGetComponent<MeshRenderer>(out var component))
+                    {
+                        var newCollider = gameObject.AddComponent<MeshCollider>();
+                        newCollider.convex = true;
+                        newCollider.isTrigger = true;
+                    }
                 }
             }
             else

@@ -2,23 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using WebXR;
 
-public class Expositor : MonoBehaviour, IExpositionable
+public class ExpositionItem : MonoBehaviour, IExpositionable
 {
-    public float rotationVelocity = 10f;
-    public float radius = 1f;
-    public Transform rotatorT;
-    public Transform previewT, spawnT;
-    List<Transform> items = new();
-    int index = 0;
-    int previewIndex = 0;
-    Transform lastItemParent;
-    Transform childPreview;
+    public Transform previewT;
+    Vector3 originPosition;
+    bool isAnimating = false;
     bool isPreviewModeActive = false;
 
     #region ItemRotationController
-    [Tooltip("Mouse sensitivity")]
+    [Tooltip("Rotation Sensitivity")]
     public float mouseSensitivity = 1f;
 
     private float minimumX = -360f;
@@ -40,44 +33,22 @@ public class Expositor : MonoBehaviour, IExpositionable
 
     void Start()
     {
+        originPosition = transform.position;
         attachedCamera = Camera.main;
         originalRotation = previewT.localRotation;
-        foreach (Transform t in transform.Find("Items")) items.Add(t);
-        float angle = 0f;
-        for (var x = 0; x < items.Count; x++)
-        {
-            angle += 360 / items.Count;
-            Vector3 pos = transform.position;
-            pos.x += radius * Mathf.Cos(angle * Mathf.Deg2Rad);
-            pos.z += radius * Mathf.Sin(angle * Mathf.Deg2Rad);
-            pos = transform.rotation * pos;
-            items[x].position = pos;
-            items[x].LookAt(transform);
-        }
-        rotatorT.position = new Vector3(items[0].position.x, rotatorT.position.y, items[0].position.z);
-        rotatorT.parent = null;
-        previewT.SetParent(Camera.main.transform);
-        previewT.localPosition = Vector3.forward * 1.5f + Vector3.down / 6;
     }
 
     void Update()
     {
-        var targetRot = (360 / items.Count) * index;
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(Vector3.up * targetRot), Time.deltaTime * rotationVelocity);
         RotatePreview();
         if (isPreviewModeActive && Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) EscapePreview();
     }
 
-    public async void Move(int moveIndex)
+    public void Move(int moveIndex)
     {
         if (isAnimating) return;
-        if (isPreviewModeActive) await EscapeWithAnimation();
-        index += moveIndex;
-        previewIndex += moveIndex;
-        if (previewIndex > items.Count - 1) previewIndex = 0;
-        if (previewIndex < 0) previewIndex = items.Count - 1;
+        if (isPreviewModeActive) EscapePreview();
     }
-    bool isAnimating = false;
 
     public void Preview()
     {
@@ -88,47 +59,39 @@ public class Expositor : MonoBehaviour, IExpositionable
 
     async UniTaskVoid _PreviewSelected()
     {
-        lastItemParent = items[previewIndex];
-        var selected = lastItemParent.GetChild(0);
-        childPreview = selected;
-        childPreview.SetParent(null);
-        selected.position = spawnT.position;
         isPreviewModeActive = isAnimating = true;
         rotationX = 0f;
         rotationY = 0f;
         var t = 0f;
         while (t < 1f)
         {
-            selected.position = Vector3.Lerp(selected.position, previewT.position, t);
-            selected.rotation = Quaternion.Lerp(selected.rotation, Quaternion.Euler(Vector3.zero), t);
-            t += Time.deltaTime * rotationVelocity / 2;
+            transform.position = Vector3.Lerp(originPosition, previewT.position, t);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(Vector3.zero), t);
+            t += Time.deltaTime * 2;
             await UniTask.DelayFrame(1);
         }
-        selected.position = previewT.position;
-        selected.rotation = Quaternion.Euler(Vector3.zero);
+        transform.position = previewT.position;
+        transform.rotation = Quaternion.Euler(Vector3.zero);
         isAnimating = false;
     }
 
     public void EscapePreview()
     {
-        EscapeWithAnimation().Forget();
+        _EscapePreview().Forget();
     }
 
-    public async UniTask EscapeWithAnimation()
+    public async UniTask _EscapePreview()
     {
         if (isAnimating) return;
-        var selected = childPreview;
         isAnimating = true;
         var t = 0f;
         while (t < 1f)
         {
-            selected.position = Vector3.Lerp(selected.position, spawnT.position, t);
-            selected.rotation = Quaternion.Lerp(selected.rotation, Quaternion.Euler(Vector3.zero), t);
-            t += Time.deltaTime * rotationVelocity / 2;
+            transform.position = Vector3.Lerp(previewT.position, originPosition, t);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(Vector3.zero), t);
+            t += Time.deltaTime * 2;
             await UniTask.DelayFrame(1);
         }
-        childPreview.SetParent(lastItemParent);
-        selected.localPosition = Vector3.zero;
         isAnimating = false;
         isPreviewModeActive = false;
     }
@@ -156,7 +119,7 @@ public class Expositor : MonoBehaviour, IExpositionable
                 Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
                 Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
 
-                childPreview.rotation = originalRotation * xQuaternion * yQuaternion;
+                transform.rotation = originalRotation * xQuaternion * yQuaternion;
             }
         }
     }

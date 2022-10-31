@@ -11,10 +11,7 @@ using UnityObservables;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public Expositor expositor;
     public List<SpotPoint> spotPoints;
-    [HideInInspector]
-    public static bool isPreviewMode;
     [HideInInspector]
     SpotPoint actualSpotPoint;
     Observable<int> moveIndex = new() { Value = -1 };
@@ -24,7 +21,6 @@ public class GameManager : MonoBehaviour
     {
         if (Instance) Destroy(this.gameObject);
         else Instance = this;
-        isPreviewMode = false;
         actualSpotPoint = new() { skyTexture = RenderSettings.skybox.GetTexture("_Tex") };
         moveIndex.OnChanged += () =>
         {
@@ -82,11 +78,6 @@ public class GameManager : MonoBehaviour
         RenderSettings.skybox.SetFloat("_Blend", 0f);
         //camera.focalLength = startFocalLenght;
         actualSpotPoint = spotPoint;
-    }
-
-    public void Back()
-    {
-        if (isPreviewMode) expositor.EscapePreview().Forget();
     }
 
     // public void Save()

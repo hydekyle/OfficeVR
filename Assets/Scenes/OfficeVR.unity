@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.5290347, g: 0.48878098, b: 0.43988317, a: 1}
+  m_IndirectSpecularColor: {r: 0.52863055, g: 0.4890651, b: 0.4392935, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -459,6 +459,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718336
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -493,6 +494,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718336
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 102009336}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &102009340
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -873,6 +884,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718344
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -907,6 +919,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718344
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 244542186}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &244542189
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1710,6 +1732,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718345
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -1744,6 +1767,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718345
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 543069833}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &543069836
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2194,6 +2227,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718346
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -2228,6 +2262,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718346
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 711077966}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &711077969
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2385,6 +2429,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718347
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -2419,6 +2464,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718347
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 966313313}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &966313316
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3232,6 +3287,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718348
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -3266,6 +3322,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718348
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 1352949608}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &1352949611
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3736,6 +3802,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718349
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -3770,6 +3837,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718349
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 1413243901}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &1413243904
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4118,6 +4195,7 @@ MonoBehaviour:
       variableTable: []
       localVariableTable: []
     actionList:
+    - rid: 4105016370408718350
     - rid: 4105016272541974530
     trigger: 0
     isLoop: 0
@@ -4152,6 +4230,16 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
+    - rid: 4105016370408718350
+      type: {class: Tween, ns: RPGSystem, asm: Assembly-CSharp}
+      data:
+        type: 0
+        punch: {x: 1, y: 1, z: 1}
+        targetTransform: {fileID: 1791960957}
+        duration: 0.4
+        elasticity: 3
+        vibrato: 1
+        waitEnd: 1
 --- !u!65 &1791960960
 BoxCollider:
   m_ObjectHideFlags: 0

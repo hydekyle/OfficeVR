@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
+using RPGSystem;
+using UnityEngine;
 using WebXR;
 
 [RequireComponent(typeof(Camera))]
@@ -34,48 +37,36 @@ public class DesertFreeFlightController : MonoBehaviour
     private Vector3 axisLastFrame;
     private Vector3 axisDelta;
 
+    RaycastHit[] hits = new RaycastHit[1];
+    bool isMoving = false;
+    float playerHeight = 1.8f;
+    public float movementSpeed = 0.2f;
+    public LayerMask clickRayLayerMask;
+    public float walkToPointDelay = 1f;
+
+    public float dragVsClickTime = 0.1f;
+    float lastTimeClick = -999f;
+    Vector3 lastPositionClick;
+    CancellationTokenSource sourceClickToMove = new();
+    IExpositionable activeExposition;
+
     void Start()
     {
-        WebXRManager.Instance.OnXRChange += onXRChange;
-        WebXRManager.Instance.OnXRCapabilitiesUpdate += onXRCapabilitiesUpdate;
         originalRotation = transform.localRotation;
         attachedCamera = GetComponent<Camera>();
     }
 
-    private void onXRChange(WebXRState state)
-    {
-        if (state == WebXRState.ENABLED)
-        {
-            DisableEverything();
-        }
-        else
-        {
-            EnableAccordingToPlatform();
-        }
-    }
-
-    private void onXRCapabilitiesUpdate(WebXRDisplayCapabilities vrCapabilities)
-    {
-        capabilities = vrCapabilities;
-        EnableAccordingToPlatform();
-    }
-
     void Update()
     {
-        // if (translationEnabled)
-        // {
-        //     float x = Input.GetAxis("Horizontal") * Time.deltaTime * straffeSpeed;
-        //     float z = Input.GetAxis("Vertical") * Time.deltaTime * straffeSpeed;
-        //     transform.Translate(x, 0, z);
-        // }
-
         attachedCamera.focalLength = Mathf.Clamp(attachedCamera.focalLength + Input.mouseScrollDelta.y * 2, 12, 48);
 
-        if (rotationEnabled && !GameManager.isPreviewMode)
+        if (rotationEnabled && activeExposition == null)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
+                lastTimeClick = Time.time;
+                lastPositionClick = Input.mousePosition;
             }
             if (Input.GetMouseButton(0))
             {
@@ -93,22 +84,50 @@ public class DesertFreeFlightController : MonoBehaviour
                 Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
 
                 transform.localRotation = originalRotation * xQuaternion * yQuaternion;
+
+                if (isMoving) return;
+                if (lastPositionClick == Input.mousePosition)
+                {
+                    sourceClickToMove.Cancel();
+                    ClickToMove();
+                    return;
+                }
+                if (lastTimeClick + dragVsClickTime < Time.time) return;
+                sourceClickToMove.Cancel();
+                ClickToMove();
             }
         }
     }
 
-    void DisableEverything()
+    public void Back()
     {
-        translationEnabled = false;
-        rotationEnabled = false;
+        if (activeExposition != null)
+        {
+            activeExposition.EscapePreview();
+            activeExposition = null;
+        }
     }
 
-    /// Enables rotation and translation control for desktop environments.
-    /// For mobile environments, it enables rotation or translation according to
-    /// the device capabilities.
-    void EnableAccordingToPlatform()
+    void ClickToMove()
     {
-        rotationEnabled = translationEnabled = !capabilities.supportsImmersiveVR;
+        if (activeExposition != null) return;
+        var lastHit = hits[0];
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.RaycastNonAlloc(ray, hits, Mathf.Infinity, clickRayLayerMask);
+
+        if (lastHit.GetHashCode() == hits[0].GetHashCode()) return;
+
+        if (hits[0].transform != null)
+        {
+            if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
+            {
+                rpgEvent.TriggerPageActionList();
+                if (hits[0].transform.TryGetComponent<IExpositionable>(out var expo))
+                {
+                    activeExposition = expo;
+                }
+            }
+        }
     }
 
     public static float ClampAngle(float angle, float min, float max)
