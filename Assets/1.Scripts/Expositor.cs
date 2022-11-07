@@ -40,6 +40,7 @@ public class Expositor : MonoBehaviour, IExpositionable
     #endregion
 
     bool isAnimating = false;
+    public ParticleSystem ps;
 
     void Start()
     {
@@ -87,11 +88,28 @@ public class Expositor : MonoBehaviour, IExpositionable
     void PintadaWapa()
     {
         if (previewIndex == 0)
+        {
             publicMaterial.color = blueColor;
+            ParticleShot(blueColor);
+
+        }
         else if (previewIndex == 1)
+        {
             publicMaterial.color = blackColor;
+            ParticleShot(blackColor);
+        }
         else if (previewIndex == 2)
+        {
             publicMaterial.color = redColor;
+            ParticleShot(redColor);
+        }
+    }
+
+    void ParticleShot(Color color)
+    {
+        if (DesertFreeFlightController.Instance.IsBusy()) return;
+        ps.startColor = color;
+        ps.Emit(8);
     }
 
     public void Preview()

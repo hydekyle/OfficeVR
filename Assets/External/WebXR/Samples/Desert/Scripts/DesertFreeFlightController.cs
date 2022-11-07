@@ -43,11 +43,18 @@ public class DesertFreeFlightController : MonoBehaviour
 
     IExpositionable activeExposition;
     CancellationTokenSource sourceClickToMove = new();
+    public static DesertFreeFlightController Instance;
 
     void Start()
     {
+        Instance = this;
         originalRotation = transform.localRotation;
         attachedCamera = GetComponent<Camera>();
+    }
+
+    public bool IsBusy()
+    {
+        return activeExposition.IsBusy();
     }
 
     void Update()
