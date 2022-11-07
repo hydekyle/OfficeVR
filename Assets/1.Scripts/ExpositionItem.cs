@@ -53,6 +53,7 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
     {
         RotatePreview();
         if (isPreviewModeActive && Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) EscapePreview();
+        // TODO: move at button keep pressed, exit when not
     }
 
     public void Move(int moveIndex)

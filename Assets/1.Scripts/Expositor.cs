@@ -60,8 +60,6 @@ public class Expositor : MonoBehaviour, IExpositionable
         }
         rotatorT.position = new Vector3(items[0].position.x, rotatorT.position.y, items[0].position.z);
         rotatorT.parent = null;
-        previewT.SetParent(Camera.main.transform);
-        previewT.localPosition = Vector3.forward * 1.5f + Vector3.down / 6;
     }
 
     void Update()
