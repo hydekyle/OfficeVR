@@ -28,9 +28,10 @@ namespace RPGSystem
             CheckAllPageCondition();
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             UnSubscribeToRequiredConditions();
+
         }
 
         void OnValidate()

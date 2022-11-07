@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6109207, g: 0.5785567, b: 0.52944887, a: 1}
+  m_IndirectSpecularColor: {r: 0.5619875, g: 0.52420455, b: 0.468867, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2230,7 +2230,7 @@ PrefabInstance:
     - target: {fileID: 1514140171033596407, guid: 2c3c75e8c977dd242818d7b551514fac,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1514140171033596407, guid: 2c3c75e8c977dd242818d7b551514fac,
         type: 3}
@@ -2628,13 +2628,13 @@ MonoBehaviour:
     - myTransform: {fileID: 1912891955}
       mySavedPositions:
       - position: {x: -74.19, y: 13.86, z: 36.22}
-        rotation: {x: -0, y: 331.05136, z: 0}
+        rotation: {x: -0, y: 331.05133, z: 0}
         scale: {x: 1.3977, y: 1.3977, z: 1.3977}
       - position: {x: -72.22266, y: 13.86, z: 34.396645}
-        rotation: {x: 0, y: 328.5232, z: 0}
+        rotation: {x: -0, y: 328.5232, z: 0}
         scale: {x: 1.3977, y: 1.3977, z: 1.3977}
       - position: {x: -82.57, y: 13.86, z: 40.16}
-        rotation: {x: 0, y: 260.00195, z: 0}
+        rotation: {x: -0, y: 260.00195, z: 0}
         scale: {x: 1.3977, y: 1.3977, z: 1.3977}
       - position: {x: -79.18, y: 13.708, z: 34.358}
         rotation: {x: -0, y: 309.11963, z: 0}
@@ -2643,7 +2643,7 @@ MonoBehaviour:
         rotation: {x: -0, y: 110.99899, z: 0}
         scale: {x: 1.3977, y: 1.3977, z: 1.3977}
       - position: {x: -86.8, y: 13.5, z: 23.4}
-        rotation: {x: -0, y: 48.39817, z: -0}
+        rotation: {x: -0, y: 48.39817, z: 0}
         scale: {x: 1.3977, y: 1.3977, z: 1.3977}
       - position: {x: 0, y: 0, z: 0}
         rotation: {x: 0, y: 0, z: 0}
@@ -2858,6 +2858,32 @@ MonoBehaviour:
         scale: {x: 1, y: 1, z: 1}
       - position: {x: 0, y: 0, z: 0}
         rotation: {x: -0, y: 0, z: 0}
+        scale: {x: 0, y: 0, z: 0}
+    - myTransform: {fileID: 1867272095}
+      mySavedPositions:
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: -0, y: 66.41042, z: -0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: -0, y: 63.970413, z: -0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: -0, y: 354.4991, z: 0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: -0, y: 63.31014, z: -0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: -0, y: 173.47748, z: 0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: -0, y: 113.93039, z: 0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: 0, y: 0, z: 0}
+        scale: {x: 0, y: 0, z: 0}
+      - position: {x: 0, y: 0, z: 0}
+        rotation: {x: 0, y: 0, z: 0}
         scale: {x: 0, y: 0, z: 0}
 --- !u!4 &1040905888
 Transform:
@@ -3082,7 +3108,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1122295677
 BoxCollider:
@@ -3222,7 +3248,7 @@ RectTransform:
   - {fileID: 1952484083}
   - {fileID: 131598302}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4054,9 +4080,8 @@ Transform:
   m_Children:
   - {fileID: 506256192}
   - {fileID: 118984464}
-  - {fileID: 1867272095}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -31.4, z: 0}
 --- !u!1 &1726114295
 GameObject:
@@ -4839,13 +4864,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1867272094}
-  m_LocalRotation: {x: 0.17141697, y: 0.65313774, z: -0.15527104, w: 0.72105354}
-  m_LocalPosition: {x: -3.1566362, y: 0.82295036, z: -0.13327295}
+  m_LocalRotation: {x: 0.20703804, y: 0.43365368, z: -0.10309284, w: 0.87089133}
+  m_LocalPosition: {x: -70.41492, y: 20.132948, z: 42.761612}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1631846239}
-  m_RootOrder: 2
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 50, y: 64.212, z: 0}
 --- !u!114 &1867272096
 MonoBehaviour:
@@ -4879,7 +4904,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

@@ -35,11 +35,24 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR
-        // if (Input.GetKeyDown(KeyCode.Alpha1)) MoveIndex(-1);
-        // if (Input.GetKeyDown(KeyCode.Alpha2)) MoveIndex(1);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) MoveIndex(-1);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) MoveIndex(1);
         if (Input.GetKeyDown(KeyCode.F1)) rManager.Save(moveIndex.Value);
         // if (Input.GetKeyDown(KeyCode.F2)) Load();
 #endif
+    }
+
+    void OnDestroy()
+    {
+        SaveChangesDuringPlayMode();
+    }
+
+    async void SaveChangesDuringPlayMode()
+    {
+        string saveData = JsonUtility.ToJson(this, true);
+        await UniTask.Delay(100);
+        JsonUtility.FromJsonOverwrite(saveData, this);
+        print("saved");
     }
 
     int MoveIndex(int adition)

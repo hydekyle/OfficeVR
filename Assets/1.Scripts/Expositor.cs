@@ -78,7 +78,7 @@ public class Expositor : MonoBehaviour, IExpositionable
         previewIndex += moveIndex;
         if (previewIndex > items.Count - 1) previewIndex = 0;
         if (previewIndex < 0) previewIndex = items.Count - 1;
-        PintadaWapa();
+        //PintadaWapa();
     }
 
     public Color blueColor, blackColor, redColor;
