@@ -32,14 +32,20 @@ public class GameManager : MonoBehaviour
         MoveIndex(0);
     }
 
+#if UNITY_EDITOR
+
     void Update()
     {
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Alpha1)) MoveIndex(-1);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) MoveIndex(1);
-        if (Input.GetKeyDown(KeyCode.F1)) rManager.Save(moveIndex.Value);
-        // if (Input.GetKeyDown(KeyCode.F2)) Load();
-#endif
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            rManager.Save(moveIndex.Value);
+            MoveIndex(-1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            rManager.Save(moveIndex.Value);
+            MoveIndex(1);
+        }
     }
 
     void OnDestroy()
@@ -54,6 +60,8 @@ public class GameManager : MonoBehaviour
         JsonUtility.FromJsonOverwrite(saveData, this);
         print("saved");
     }
+
+#endif
 
     int MoveIndex(int adition)
     {
