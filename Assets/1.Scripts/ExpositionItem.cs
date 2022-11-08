@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -64,7 +65,10 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
 
     public void Preview()
     {
-        if (!isPreviewModeActive && !isAnimating) _PreviewSelected().Forget();
+        if (!isPreviewModeActive && !isAnimating)
+        {
+            _PreviewSelected().Forget();
+        }
     }
 
     async UniTaskVoid _PreviewSelected()
@@ -82,15 +86,18 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
         }
         transform.position = previewT.position;
         transform.rotation = Quaternion.Euler(Vector3.zero);
-        ResetMouseRotationValues();
         isAnimating = false;
+
+        ResetMouseRotationValues();
     }
 
     void ResetMouseRotationValues()
     {
+        axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
+        axis = Vector3.zero;
+        axisDelta = Vector3.zero;
         rotationX = 0f;
         rotationY = 0f;
-        axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
     }
 
     public void EscapePreview()
@@ -102,6 +109,7 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
     {
         if (isAnimating || !isPreviewModeActive) return;
         isAnimating = true;
+        isPreviewModeActive = false;
         var t = 0f;
         do
         {
@@ -111,8 +119,10 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
             await UniTask.DelayFrame(1);
         } while (t < 1f);
         isAnimating = false;
-        isPreviewModeActive = false;
+        //onEnded.Invoke();
     }
+
+    bool rotationEnabled;
 
     void RotatePreview()
     {
@@ -121,7 +131,9 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
             if (Input.GetMouseButtonDown(0))
             {
                 axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
+                rotationEnabled = true;
             }
+
             if (Input.GetMouseButton(0))
             {
                 axis = attachedCamera.ScreenToViewportPoint(Input.mousePosition);
@@ -136,11 +148,16 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
 
                 transform.rotation = originalRotation * xQuaternion * yQuaternion;
             }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                rotationEnabled = false;
+            }
         }
     }
 
     public bool IsBusy()
     {
-        return isAnimating || isPreviewModeActive;
+        return isPreviewModeActive;
     }
 }

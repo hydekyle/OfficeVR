@@ -91,12 +91,12 @@ public class DesertFreeFlightController : MonoBehaviour
             if (lastPositionClick == Input.mousePosition)
             {
                 sourceClickToMove.Cancel();
-                ClickToMove();
+                ClickInteraction();
                 return;
             }
             if (lastTimeClick + dragVsClickTime < Time.time) return;
             sourceClickToMove.Cancel();
-            ClickToMove();
+            ClickInteraction();
         }
     }
 
@@ -109,7 +109,7 @@ public class DesertFreeFlightController : MonoBehaviour
         }
     }
 
-    void ClickToMove()
+    void ClickInteraction()
     {
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray, Mathf.Infinity, clickRayLayerMask);
@@ -120,8 +120,6 @@ public class DesertFreeFlightController : MonoBehaviour
             {
                 activeExposition = expo;
                 expo.Preview();
-                rotationX = 0;
-                rotationY = 0;
             }
 
             if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))

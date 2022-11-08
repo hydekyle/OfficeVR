@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -10,13 +11,14 @@ public class Expositor : MonoBehaviour, IExpositionable
     public float radius = 1f;
     public Transform rotatorT;
     public Transform previewT, spawnT;
-    List<Transform> items = new();
-    int index = 0;
-    int previewIndex = 0;
-    Transform lastItemParent;
-    Transform childPreview;
-    bool isPreviewModeActive = false;
     public Material publicMaterial;
+    public Color blueColor, blackColor, redColor;
+    List<Transform> items = new();
+    Transform childPreview, lastItemParent;
+    bool isPreviewModeActive = false;
+    int previewIndex = 0;
+    int index = 0;
+    Action onEnded;
 
     #region ItemRotationController
     [Tooltip("Mouse sensitivity")]
@@ -80,8 +82,6 @@ public class Expositor : MonoBehaviour, IExpositionable
         if (previewIndex < 0) previewIndex = items.Count - 1;
         //PintadaWapa();
     }
-
-    public Color blueColor, blackColor, redColor;
 
     void PintadaWapa()
     {
@@ -162,6 +162,7 @@ public class Expositor : MonoBehaviour, IExpositionable
         selected.localPosition = Vector3.zero;
         isAnimating = false;
         isPreviewModeActive = false;
+        onEnded.Invoke();
     }
 
     void RotatePreview()
