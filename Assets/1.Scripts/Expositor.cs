@@ -144,6 +144,7 @@ public class Expositor : MonoBehaviour, IExpositionable
     public async UniTask EscapeWithAnimation()
     {
         if (isAnimating) return;
+        if (childPreview == null) return;
         var selected = childPreview;
         isAnimating = true;
         var t = 0f;

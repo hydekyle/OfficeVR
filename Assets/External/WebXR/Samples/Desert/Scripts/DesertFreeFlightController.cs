@@ -56,7 +56,7 @@ public class DesertFreeFlightController : MonoBehaviour
 
     public bool IsBusy()
     {
-        return expositor.IsBusy() || activeExposition.IsBusy();
+        return expositor.IsBusy() || activeExposition != null && activeExposition.IsBusy();
     }
 
     void Update()
