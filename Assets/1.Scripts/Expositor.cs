@@ -9,7 +9,6 @@ public class Expositor : MonoBehaviour, IExpositionable
 {
     public float rotationVelocity = 10f;
     public float radius = 1f;
-    public Transform rotatorT;
     public Transform previewT, spawnT;
     public Material publicMaterial;
     public Color blueColor, blackColor, redColor;
@@ -18,7 +17,6 @@ public class Expositor : MonoBehaviour, IExpositionable
     bool isPreviewModeActive = false;
     int previewIndex = 0;
     int index = 0;
-    Action onEnded;
 
     #region ItemRotationController
     [Tooltip("Mouse sensitivity")]
@@ -58,10 +56,8 @@ public class Expositor : MonoBehaviour, IExpositionable
             pos.z += radius * Mathf.Sin(angle * Mathf.Deg2Rad);
             pos = transform.rotation * pos;
             items[x].position = pos;
-            items[x].LookAt(transform);
+            //items[x].LookAt(transform);
         }
-        rotatorT.position = new Vector3(items[0].position.x, rotatorT.position.y, items[0].position.z);
-        rotatorT.parent = null;
     }
 
     void Update()
@@ -69,7 +65,7 @@ public class Expositor : MonoBehaviour, IExpositionable
         var targetRot = (360 / items.Count) * index;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(Vector3.up * targetRot), Time.deltaTime * rotationVelocity);
         RotatePreview();
-        //if (isPreviewModeActive && Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) EscapePreview();
+        if (isPreviewModeActive && Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) EscapePreview();
     }
 
     public async void Move(int moveIndex)
@@ -151,18 +147,19 @@ public class Expositor : MonoBehaviour, IExpositionable
         var selected = childPreview;
         isAnimating = true;
         var t = 0f;
+        childPreview.SetParent(lastItemParent);
         while (t < 1f)
         {
             selected.position = Vector3.Lerp(selected.position, spawnT.position, t);
-            selected.rotation = Quaternion.Lerp(selected.rotation, Quaternion.Euler(Vector3.zero), t);
+            selected.localRotation = Quaternion.Lerp(selected.localRotation, spawnT.rotation, t);
             t += Time.deltaTime * rotationVelocity / 2;
             await UniTask.DelayFrame(1);
         }
-        childPreview.SetParent(lastItemParent);
         selected.localPosition = Vector3.zero;
+        selected.localRotation = Quaternion.Euler(Vector3.zero);
+        previewT.rotation = Quaternion.identity;
         isAnimating = false;
         isPreviewModeActive = false;
-        onEnded.Invoke();
     }
 
     void RotatePreview()

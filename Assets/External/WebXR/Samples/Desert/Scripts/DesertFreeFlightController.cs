@@ -41,27 +41,29 @@ public class DesertFreeFlightController : MonoBehaviour
     float lastTimeClick = -9f;
     Vector3 lastPositionClick;
 
-    IExpositionable activeExposition;
+    public IExpositionable activeExposition;
     CancellationTokenSource sourceClickToMove = new();
     public static DesertFreeFlightController Instance;
+    public Expositor expositor;
 
     void Start()
     {
         Instance = this;
         originalRotation = transform.localRotation;
         attachedCamera = GetComponent<Camera>();
+        activeExposition = expositor;
     }
 
     public bool IsBusy()
     {
-        return activeExposition.IsBusy();
+        return expositor.IsBusy() || activeExposition.IsBusy();
     }
 
     void Update()
     {
         attachedCamera.focalLength = Mathf.Clamp(attachedCamera.focalLength + Input.mouseScrollDelta.y * 2, 12, 48);
 
-        if (activeExposition != null && activeExposition.IsBusy()) return;
+        if (IsBusy()) return;
         if (Input.GetMouseButtonDown(0))
         {
             axisLastFrame = attachedCamera.ScreenToViewportPoint(Input.mousePosition);

@@ -9,8 +9,8 @@ public class ExpositionItem : MonoBehaviour, IExpositionable
     public Transform previewT;
     Vector3 originPosition;
     Quaternion originRotation;
-    bool isAnimating = false;
-    bool isPreviewModeActive = false;
+    public bool isAnimating = false;
+    public bool isPreviewModeActive = false;
 
     #region ItemRotationController
     [Tooltip("Rotation Sensitivity")]
