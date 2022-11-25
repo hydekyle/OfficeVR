@@ -17,6 +17,17 @@ namespace RPGSystem
         List<int> _subscribedVariableList = new();
         SpriteRenderer spriteRenderer;
 
+        /// <summary> 
+        /// Fire RPG Actions from active page of this RPG Event
+        /// ! You should call this function from you Raycast logic !
+        /// </summary>
+        public void TriggerEvent()
+        {
+            var page = GetActivePage();
+            if (page.trigger != TriggerType.PlayerInteraction) return;
+            if (page.conditions.IsAllConditionOK()) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
+        }
+
         void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -28,49 +39,36 @@ namespace RPGSystem
             CheckAllPageCondition();
         }
 
-        void OnDestroy()
+        // Called every time a switch or variable required by any condition from this RPG Event
+        void CheckAllPageCondition()
         {
-            UnSubscribeToRequiredConditions();
-
-        }
-
-        void OnValidate()
-        {
-            foreach (var page in pages)
+            for (var x = pages.Count - 1; x >= 0; x--)
             {
-                page.RPGEventParent = this;
-                if (page.conditions != null) page.conditions.Refresh();
-                if (page.actionList != null)
-                    foreach (var action in page.actionList)
-                    {
-                        var actionType = action.GetType();
-                        if (actionType == typeof(SetVariables))
-                        {
-                            SetVariables sv = (SetVariables)action;
-                            sv.setVariables?.Refresh();
-                        }
-                        else if (actionType == typeof(CheckConditions))
-                        {
-                            CheckConditions sv = (CheckConditions)action;
-                            sv.conditionList?.Refresh();
-                        }
-                    }
+                var page = pages[x];
+                var isAllOK = page.conditions.IsAllConditionOK();
+                if (isAllOK && activePageIndex == x) return;
+                else if (isAllOK)
+                {
+                    gameObject.SetActive(true);
+                    ApplyPage(x);
+                    return;
+                }
             }
+            // If any of all pages met the conditions we disable the GameObject
+            gameObject.SetActive(false);
+            activePageIndex = -1;
         }
 
-        // Called when the component is added for first time
-        void Reset()
+        void ApplyPage(int pageIndex)
         {
-            pages.Add(new PageEvent()
+            var page = pages[pageIndex];
+            if (spriteRenderer) spriteRenderer.sprite = page.sprite;
+            if (pageIndex != activePageIndex)
             {
-                sprite = TryGetComponent<SpriteRenderer>(out SpriteRenderer s) ? s.sprite : null
-            });
-        }
-
-        void OnValuePageChanged()
-        {
-            UIShowSprite();
-            UIShowBoxCollider();
+                if (page.trigger == TriggerType.Autorun && page.actionList.Count > 0) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
+                activePageIndex = pageIndex;
+                if (page.playSFXOnEnabled) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, page.soundOptions, gameObject);
+            }
         }
 
         void UIShowSprite()
@@ -142,47 +140,15 @@ namespace RPGSystem
             }
         }
 
+        void OnValuePageChanged()
+        {
+            UIShowSprite();
+            UIShowBoxCollider();
+        }
+
         public PageEvent GetActivePage()
         {
             return pages[activePageIndex];
-        }
-
-        void ApplyPage(int pageIndex)
-        {
-            var page = pages[pageIndex];
-            if (spriteRenderer) spriteRenderer.sprite = page.sprite;
-            if (pageIndex != activePageIndex)
-            {
-                if (page.trigger == TriggerType.Autorun && page.actionList.Count > 0) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
-                activePageIndex = pageIndex;
-                gameObject.SetActive(true);
-                if (page.playSFXOnEnabled) RPGManager.AudioManager.PlaySound(page.playSFXOnEnabled, page.soundOptions, gameObject);
-            }
-        }
-
-        public void TriggerPageActionList()
-        {
-            if (activePageIndex == -1) return;
-            var page = GetActivePage();
-            if (page.conditions.IsAllConditionOK()) page.ResolveActionList(this.GetCancellationTokenOnDestroy()).Forget();
-        }
-
-        // Called every time a required switch or variable changes the value
-        void CheckAllPageCondition()
-        {
-            for (var x = pages.Count - 1; x >= 0; x--)
-            {
-                var page = pages[x];
-                var isAllOK = page.conditions.IsAllConditionOK();
-                if (isAllOK && activePageIndex == x) return;
-                else if (isAllOK)
-                {
-                    ApplyPage(x);
-                    return;
-                }
-            }
-            gameObject.SetActive(false);
-            activePageIndex = -1;
         }
 
         void SubscribeToRequiredValueConditions()
@@ -193,6 +159,44 @@ namespace RPGSystem
         void UnSubscribeToRequiredConditions()
         {
             foreach (var page in pages) page.conditions.UnsubscribeConditionTable(ref _subscribedSwitchList, ref _subscribedVariableList, ref _subscribedLocalVariableList, CheckAllPageCondition);
+        }
+
+        void OnDestroy()
+        {
+            UnSubscribeToRequiredConditions();
+        }
+
+        // Called when the component is added for first time
+        void Reset()
+        {
+            pages.Add(new PageEvent()
+            {
+                sprite = TryGetComponent<SpriteRenderer>(out SpriteRenderer s) ? s.sprite : null
+            });
+        }
+
+        void OnValidate()
+        {
+            foreach (var page in pages)
+            {
+                page.RPGEventParent = this;
+                if (page.conditions != null) page.conditions.Refresh();
+                if (page.actionList != null)
+                    foreach (var action in page.actionList)
+                    {
+                        var actionType = action.GetType();
+                        if (actionType == typeof(SetVariables))
+                        {
+                            SetVariables sv = (SetVariables)action;
+                            sv.setVariables?.Refresh();
+                        }
+                        else if (actionType == typeof(CheckConditions))
+                        {
+                            CheckConditions sv = (CheckConditions)action;
+                            sv.conditionList?.Refresh();
+                        }
+                    }
+            }
         }
     }
 

@@ -126,7 +126,7 @@ public class DesertFreeFlightController : MonoBehaviour
 
             if (hits[0].transform.TryGetComponent<RPGEvent>(out var rpgEvent))
             {
-                rpgEvent.TriggerPageActionList();
+                rpgEvent.TriggerEvent();
             }
         }
     }
